@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار — لوحة الطالب</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink: #1A1030;
+  --panel: #241B3D;
+  --panel-2: #2E2350;
+  --gold: #FF6F5E;
+  --gold-soft: #FF9587;
+  --teal: #22B07D;
+  --teal-soft: #6EE7B7;
+  --text: #F7F3FF;
+  --muted: #A79FC7;
+  --line: rgba(247,243,255,0.09);
+  --danger: #F43F5E;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  min-height:100vh;
+}
+.display { font-family:'El Messiri', serif; font-weight:700; }
+
+/* ---------- LAYOUT ---------- */
+.app { display:flex; min-height:100vh; }
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  width: 240px; flex-shrink:0;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  padding: 26px 20px;
+  display:flex; flex-direction:column; gap: 28px;
+  position: sticky; top:0; height:100vh;
+}
+.logo { display:flex; align-items:center; gap:10px; font-size:20px; }
+.logo-dot { width:9px; height:9px; border-radius:50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+
+.nav-group { display:flex; flex-direction:column; gap: 4px; }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding: 11px 14px; border-radius: 12px; color: var(--muted);
+  font-size:14px; font-weight:500; cursor:pointer; transition: all .15s;
+}
+.nav-item .dot { width:6px; height:6px; border-radius:50%; background: var(--line); flex-shrink:0; }
+.nav-item:hover { background: var(--panel-2); color: var(--text); }
+.nav-item.active { background: var(--panel-2); color: var(--gold-soft); }
+.nav-item.active .dot { background: var(--gold); box-shadow:0 0 6px var(--gold); }
+
+.sidebar-bottom { margin-top:auto; }
+.profile-mini { display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; background: var(--panel-2); }
+.avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--teal-soft)); flex-shrink:0; }
+.profile-mini .pname { font-size:13px; font-weight:600; }
+.profile-mini .pgrade { font-size:11px; color: var(--muted); }
+
+@media (max-width: 880px) {
+  .sidebar { display:none; }
+}
+
+/* ---------- MAIN ---------- */
+.main { flex:1; padding: 30px 34px; max-width: 1100px; }
+
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 30px; flex-wrap:wrap; gap:14px; }
+.topbar h1 { font-size: 24px; }
+.topbar .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
+.streak {
+  display:flex; align-items:center; gap:8px; background: var(--panel);
+  border:1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size:13px;
+}
+.streak strong { color: var(--gold-soft); }
+
+/* ---------- OVERVIEW STRIP ---------- */
+.overview { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+@media (max-width: 720px) { .overview { grid-template-columns: 1fr; } }
+.ov-card { background: var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; }
+.ov-card .label { color: var(--muted); font-size:13px; margin-bottom:10px; }
+.ov-card .value { font-size: 28px; }
+.ov-card .value.gold { color: var(--gold); }
+.ov-card .value.teal { color: var(--teal-soft); }
+.progress-bar { height:6px; border-radius:999px; background: var(--panel-2); margin-top:12px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:999px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
+
+/* ---------- SECTION HEAD ---------- */
+.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.section-head h2 { font-size: 18px; }
+.section-head .link { color: var(--gold-soft); font-size:13px; text-decoration:none; }
+
+/* ---------- SUBJECT PATH ---------- */
+.subjects { display:flex; flex-direction:column; gap:0; margin-bottom: 38px; }
+.subjects::before {
+  content:none;
+}
+.subject-row {
+  position:relative;
+  display:flex; align-items:center; gap:18px;
+  background: var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding: 16px 18px; margin-bottom: 12px;
+}
+.subj-icon {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+  background: var(--panel-2); color: var(--gold);
+}
+.subj-body { flex:1; min-width:0; }
+.subj-body .subj-name { font-size:15px; font-weight:600; margin-bottom:6px; }
+.subj-body .subj-meta { font-size:12px; color: var(--muted); }
+.subj-progress { width: 120px; flex-shrink:0; }
+.subj-progress .pct { font-size:12px; color: var(--muted); text-align:left; margin-bottom:6px; }
+.subj-btn {
+  background: var(--panel-2); color: var(--text); border:1px solid var(--line);
+  border-radius:10px; padding: 9px 16px; font-size:13px; cursor:pointer; flex-shrink:0;
+}
+.subj-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
+@media (max-width: 620px) {
+  .subj-progress { display:none; }
+}
+
+/* ---------- TWO COL ---------- */
+.two-col { display:grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+@media (max-width: 880px) { .two-col { grid-template-columns: 1fr; } }
+
+/* live class card */
+.live-card {
+  background: linear-gradient(160deg, var(--panel-2), var(--panel));
+  border:1px solid var(--line); border-radius:18px; padding:24px;
+}
+.live-badge {
+  display:inline-flex; align-items:center; gap:6px; font-size:12px; color: var(--danger);
+  background: rgba(244,63,94,0.12); border-radius:999px; padding:4px 12px; margin-bottom:14px;
+}
+.live-dot { width:6px; height:6px; border-radius:50%; background: var(--danger); }
+.live-card h3 { font-size:17px; margin-bottom:6px; }
+.live-card .meta { color: var(--muted); font-size:13px; margin-bottom:18px; }
+.btn-join {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
+  padding: 12px 24px; border-radius: 999px; border:none; cursor:pointer;
+}
+
+/* recommendation card */
+.reco-card {
+  background: var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px;
+}
+.reco-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+.reco-item:last-child { border-bottom:none; }
+.reco-tag {
+  width:32px; height:32px; border-radius:10px; background: var(--panel-2);
+  display:flex; align-items:center; justify-content:center; font-size:13px; color: var(--teal-soft); flex-shrink:0;
+}
+.reco-text { font-size:13px; }
+.reco-text .t1 { color: var(--text); margin-bottom:2px; }
+.reco-text .t2 { color: var(--muted); font-size:12px; }
+.auth-guard {
+  display:none; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background: rgba(255,111,94,0.1); border:1px solid rgba(255,111,94,0.35);
+  border-radius:16px; padding:16px 20px; margin-bottom:24px; font-size:14px;
+}
+.auth-guard.show { display:flex; }
+.auth-guard a {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:13px;
+  padding: 9px 20px; border-radius: 999px; text-decoration:none; flex-shrink:0;
+}
+.empty-state { color: var(--muted); font-size:14px; padding: 20px; text-align:center; }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
+    <nav class="nav-group">
+      <div class="nav-item active"><span class="dot"></span>الرئيسية</div>
+      <div class="nav-item"><span class="dot"></span>موادي</div>
+      <div class="nav-item"><span class="dot"></span>البث المباشر</div>
+      <div class="nav-item"><span class="dot"></span>الاختبارات</div>
+      <div class="nav-item"><span class="dot"></span>تقرير تقدمي</div>
+      <div class="nav-item"><span class="dot"></span>الإعدادات</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="profile-mini">
+        <div class="avatar"></div>
+        <div>
+          <div class="pname" id="sidebarName">...</div>
+          <div class="pgrade" id="sidebarGrade">...</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="auth-guard" id="authGuard">
+      <span>لازم تسجل دخولك عشان تشوف بياناتك الحقيقية — هذا عرض تجريبي حالياً.</span>
+      <a href="masar-auth.html">سجل دخولك</a>
+    </div>
+
+    <div class="topbar">
+      <div>
+        <h1 id="greeting">هلا 👋</h1>
+        <div class="sub">هذا وين وصلت بمسارك هالأسبوع</div>
+      </div>
+      <div class="streak">🔥 سلسلة مذاكرة: <strong>6 أيام</strong></div>
+    </div>
+
+    <div class="overview">
+      <div class="ov-card">
+        <div class="label">التقدم الكلي</div>
+        <div class="value gold" id="overallPct">—</div>
+        <div class="progress-bar"><div class="progress-fill" id="overallFill" style="width:0%"></div></div>
+      </div>
+      <div class="ov-card">
+        <div class="label">دروس مكتملة</div>
+        <div class="value" id="lessonsDone">—</div>
+      </div>
+      <div class="ov-card">
+        <div class="label">إجمالي الدروس بمنهجك</div>
+        <div class="value teal" id="lessonsTotal">—</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>مسار موادك</h2>
+      <a href="#" class="link">كل المواد</a>
+    </div>
+
+    <div class="subjects" id="subjectsContainer">
+      <div class="subject-row" id="subjectsLoading">
+        <div class="subj-body"><div class="subj-name">...جاري تحميل موادك</div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="live-card">
+        <div class="live-badge"><span class="live-dot"></span>يبدا بعد 25 دقيقة</div>
+        <h3>مراجعة الفيزياء — قانون نيوتن الثاني</h3>
+        <div class="meta">الأستاذ محمد جاسم · حصة تفاعلية 60 دقيقة</div>
+        <button class="btn-join">انضم للحصة</button>
+      </div>
+
+      <div class="reco-card">
+        <div class="section-head" style="margin-bottom:14px;">
+          <h2 style="font-size:15px;">مقترح إلك</h2>
+        </div>
+        <div class="reco-item">
+          <div class="reco-tag">↻</div>
+          <div class="reco-text">
+            <div class="t1">راجع درس "التفاعلات المزدوجة"</div>
+            <div class="t2">أخطأت بيه 3 أسئلة بآخر اختبار</div>
+          </div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-tag">✓</div>
+          <div class="reco-text">
+            <div class="t1">اختبار قصير — المعادلات التربيعية</div>
+            <div class="t2">10 أسئلة · 8 دقايق</div>
+          </div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-tag">▶</div>
+          <div class="reco-text">
+            <div class="t1">شاهد درس "التفاعلات الكيميائية 4"</div>
+            <div class="t2">الدرس الجاي بمسارك</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+const token = sessionStorage.getItem('masar_token');
+
+const subjectIcons = { }; // backend already sends an icon emoji per subject
+
+async function apiGet(path) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'فشل الطلب');
+  return data;
+}
+
+function renderSubjects(subjects) {
+  const container = document.getElementById('subjectsContainer');
+  if (!subjects.length) {
+    container.innerHTML = '<div class="empty-state">ما فيه مواد مضافة لصفك بعد.</div>';
+    return;
+  }
+  container.innerHTML = subjects.map(s => `
+    <div class="subject-row">
+      <div class="subj-icon">${s.icon || '📘'}</div>
+      <div class="subj-body">
+        <div class="subj-name">${s.subject_name}</div>
+        <div class="subj-meta">${s.lessons_done} من ${s.lessons_total} دروس مكتملة</div>
+      </div>
+      <div class="subj-progress">
+        <div class="pct">${s.percent}٪</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${s.percent}%"></div></div>
+      </div>
+      <button class="subj-btn" onclick="location.href='masar-lesson.html?subject=${s.subject_id}'">تكملة</button>
+    </div>
+  `).join('');
+}
+
+function renderDemoSubjects() {
+  // بيانات توضيحية تظهر لمن ما يكون مسجل دخول، بس بدون progress حقيقي
+  const demo = [
+    { icon:'📐', subject_name:'الرياضيات', lessons_done:0, lessons_total:3, percent:0 },
+    { icon:'🧪', subject_name:'الكيمياء', lessons_done:0, lessons_total:3, percent:0 },
+    { icon:'📖', subject_name:'اللغة العربية', lessons_done:0, lessons_total:3, percent:0 },
+  ];
+  renderSubjects(demo);
+}
+
+async function loadDashboard() {
+  if (!token) {
+    document.getElementById('authGuard').classList.add('show');
+    document.getElementById('greeting').textContent = 'هلا فيك 👋';
+    document.getElementById('sidebarName').textContent = 'زائر';
+    document.getElementById('sidebarGrade').textContent = 'سجل دخولك لتشوف صفك';
+    document.getElementById('overallPct').textContent = '—';
+    document.getElementById('lessonsDone').textContent = '—';
+    document.getElementById('lessonsTotal').textContent = '—';
+    renderDemoSubjects();
+    return;
+  }
+
+  try {
+    const meData = await apiGet('/auth/me');
+    const user = meData.user;
+    document.getElementById('greeting').textContent = `هلا ${user.full_name.split(' ')[0]} 👋`;
+    document.getElementById('sidebarName').textContent = user.full_name;
+    document.getElementById('sidebarGrade').textContent = user.grade || '—';
+
+    const progressData = await apiGet('/content/progress');
+    document.getElementById('overallPct').textContent = progressData.overall_percent + '٪';
+    document.getElementById('overallFill').style.width = progressData.overall_percent + '%';
+    document.getElementById('lessonsDone').textContent = progressData.lessons_done;
+    document.getElementById('lessonsTotal').textContent = progressData.lessons_total;
+
+    renderSubjects(progressData.subjects);
+  } catch (err) {
+    document.getElementById('authGuard').classList.add('show');
+    document.getElementById('authGuard').querySelector('span').textContent =
+      'ما كدرنا نجيب بياناتك (' + err.message + '). تأكد إن الباك اند شغّال.';
+    renderDemoSubjects();
+  }
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

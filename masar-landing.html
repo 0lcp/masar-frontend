@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار — منصتك التعليمية الشاملة</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink: #1A1030;
+  --panel: #241B3D;
+  --panel-2: #2E2350;
+  --gold: #FF6F5E;
+  --gold-soft: #FF9587;
+  --teal: #22B07D;
+  --teal-soft: #6EE7B7;
+  --text: #F7F3FF;
+  --muted: #A79FC7;
+  --line: rgba(247,243,255,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, .display {
+  font-family: 'El Messiri', serif;
+  font-weight: 700;
+}
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- NAV ---------- */
+nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(26,16,48,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+nav .wrap { display:flex; align-items:center; justify-content:space-between; height: 68px; }
+.logo { display:flex; align-items:center; gap:10px; font-family:'El Messiri',serif; font-weight:700; font-size:22px; }
+.logo-dot { width:10px; height:10px; border-radius:50%; background: var(--gold); box-shadow: 0 0 14px var(--gold); }
+.nav-links { display:flex; gap:28px; font-size:15px; color: var(--muted); }
+.nav-links a { color: var(--muted); text-decoration:none; transition: color .2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--gold); color: var(--ink); font-weight:600; font-size:14px;
+  padding: 10px 22px; border-radius: 999px; text-decoration:none; border:none; cursor:pointer;
+}
+@media (max-width: 720px) { .nav-links { display:none; } }
+
+/* ---------- HERO ---------- */
+.hero { position:relative; padding: 90px 0 60px; overflow:hidden; }
+.hero-glow {
+  position:absolute; top:-120px; left:50%; transform:translateX(-50%);
+  width: 700px; height: 700px; border-radius:50%;
+  background: radial-gradient(circle, rgba(255,111,94,0.16) 0%, rgba(255,111,94,0) 65%);
+  pointer-events:none;
+}
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  color: var(--gold-soft); font-size: 13px; letter-spacing: .5px;
+  border: 1px solid rgba(255,111,94,0.35); border-radius: 999px;
+  padding: 6px 14px; margin-bottom: 22px;
+}
+.hero h1 {
+  font-size: clamp(34px, 6vw, 56px); line-height:1.15; max-width: 780px;
+  margin-bottom: 20px;
+}
+.hero h1 span { color: var(--gold); }
+.hero p.lead {
+  color: var(--muted); font-size: 18px; max-width: 560px; margin-bottom: 34px;
+}
+.hero-actions { display:flex; gap:14px; flex-wrap:wrap; margin-bottom: 64px; }
+.btn-primary {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:15px;
+  padding: 14px 30px; border-radius: 999px; text-decoration:none; border:none; cursor:pointer;
+  box-shadow: 0 10px 30px rgba(255,111,94,0.25);
+}
+.btn-ghost {
+  background:transparent; color: var(--text); font-weight:600; font-size:15px;
+  padding: 14px 26px; border-radius: 999px; text-decoration:none;
+  border: 1px solid var(--line);
+}
+
+/* ---------- SIGNATURE: the path ---------- */
+.journey { position:relative; padding: 20px 0 100px; }
+.journey-intro { max-width: 560px; margin-bottom: 56px; }
+.journey-intro .kicker { color: var(--teal-soft); font-size:14px; font-weight:600; margin-bottom:10px; }
+.journey-intro h2 { font-size: clamp(26px,4vw,34px); }
+
+.path-rail {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0;
+}
+.path-rail::before {
+  content:"";
+  position:absolute; top: 30px; bottom: 30px; right: 27px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold) 0%, var(--teal-soft) 100%);
+  opacity: 0.35;
+}
+.stop {
+  position: relative;
+  display:flex; gap: 24px; align-items:flex-start;
+  padding: 30px 0;
+}
+.stop-node {
+  flex-shrink:0; position:relative; z-index:2;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--panel); border: 2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'El Messiri',serif; font-weight:700; color: var(--gold); font-size:18px;
+  box-shadow: 0 0 0 6px var(--ink);
+}
+.stop:nth-child(even) .stop-node { border-color: var(--teal-soft); color: var(--teal-soft); }
+.stop-body { flex:1; padding-top: 6px; }
+.stop-body h3 { font-size: 20px; margin-bottom: 8px; }
+.stop-body p { color: var(--muted); font-size: 15px; max-width: 480px; }
+.stop-tag {
+  display:inline-block; font-size:12px; color: var(--gold-soft);
+  border:1px solid rgba(255,111,94,0.3); border-radius:999px; padding:3px 10px; margin-bottom:10px;
+}
+.stop:nth-child(even) .stop-tag { color: var(--teal-soft); border-color: rgba(34,176,125,0.4); }
+
+/* ---------- FEATURE STRIP ---------- */
+.strip { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding: 40px 0; }
+.strip .wrap { display:flex; flex-wrap:wrap; gap: 20px; justify-content:space-between; }
+.strip-item { flex:1; min-width:150px; text-align:center; }
+.strip-item .display { font-size: 26px; color: var(--gold); margin-bottom: 4px; }
+.strip-item span { color: var(--muted); font-size: 13px; }
+
+/* ---------- HOW IT WORKS ---------- */
+.how { padding: 90px 0; }
+.how .kicker { color: var(--teal-soft); font-size:14px; font-weight:600; margin-bottom:10px; }
+.how h2 { font-size: clamp(26px,4vw,34px); margin-bottom: 46px; max-width:600px; }
+.steps { display:grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+@media (max-width: 800px) { .steps { grid-template-columns: 1fr; } }
+.step-card {
+  background: var(--panel); border:1px solid var(--line); border-radius: 18px; padding: 28px;
+}
+.step-num { font-family:'El Messiri',serif; font-size:32px; color: var(--gold); margin-bottom: 14px; }
+.step-card h3 { font-size: 18px; margin-bottom: 10px; }
+.step-card p { color: var(--muted); font-size: 14px; }
+
+/* ---------- AUDIENCE ---------- */
+.audience { padding: 0 0 90px; }
+.audience-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .audience-grid { grid-template-columns: 1fr; } }
+.audience-card {
+  background: linear-gradient(160deg, var(--panel-2), var(--panel));
+  border:1px solid var(--line); border-radius: 20px; padding: 32px;
+}
+.audience-card h3 { font-size: 20px; margin-bottom: 14px; color: var(--gold-soft); }
+.audience-card ul { list-style:none; color: var(--muted); font-size: 14px; display:flex; flex-direction:column; gap:10px; }
+.audience-card li::before { content: "—"; color: var(--teal-soft); margin-left: 8px; }
+
+/* ---------- CTA ---------- */
+.cta { padding: 30px 0 110px; text-align:center; }
+.cta-box {
+  background: radial-gradient(circle at 30% 20%, rgba(255,111,94,0.14), transparent 60%), var(--panel);
+  border: 1px solid var(--line); border-radius: 28px; padding: 64px 24px;
+}
+.cta-box h2 { font-size: clamp(26px,5vw,38px); margin-bottom: 16px; }
+.cta-box p { color: var(--muted); margin-bottom: 30px; }
+
+/* ---------- FOOTER ---------- */
+footer { border-top:1px solid var(--line); padding: 34px 0; }
+footer .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+footer .muted { color: var(--muted); font-size: 13px; }
+
+.reveal { opacity:0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity:1; transform:none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  .reveal { opacity:1; transform:none; transition:none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="logo-dot"></span>مسار</div>
+    <div class="nav-links">
+      <a href="#journey">المسار التعليمي</a>
+      <a href="#how">كيف يعمل</a>
+      <a href="#audience">لمن مسار</a>
+    </div>
+    <button class="nav-cta">ابدا مجاناً</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <div class="eyebrow">منصة تعليمية شاملة · المنهج المحلي</div>
+    <h1>كل خطوة بتعلمك،<br><span>بمسار وحد</span></h1>
+    <p class="lead">دروس فيديو، بث مباشر مع مدرسين، اختبارات تتصحح لحالها، ولوحة تتابع تقدمك أول بأول. مسار يجمعلك رحلة التعلم كلها بمكان وحد.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">ابدا مسارك هسه</button>
+      <a href="#journey" class="btn-ghost">شوف كيف يشتغل</a>
+    </div>
+  </div>
+</section>
+
+<section class="journey" id="journey">
+  <div class="wrap">
+    <div class="journey-intro reveal">
+      <div class="kicker">رحلتك خطوة بخطوة</div>
+      <h2>أربع محطات، مسار وحد يوصلك للفهم الكامل</h2>
+    </div>
+
+    <div class="path-rail">
+      <div class="stop reveal">
+        <div class="stop-node">١</div>
+        <div class="stop-body">
+          <div class="stop-tag">دروس فيديو</div>
+          <h3>محاضرات مطابقة لمنهجك بالضبط</h3>
+          <p>دروس مصورة تغطي كل وحدة بالمنهج، مرتبة نفس ترتيب كتابك المدرسي، تكدر توكف وترجع وتعيد أي جزء ما فهمته.</p>
+        </div>
+      </div>
+      <div class="stop reveal">
+        <div class="stop-node">٢</div>
+        <div class="stop-body">
+          <div class="stop-tag">بث مباشر</div>
+          <h3>حصص حية مع مدرسين مختصين</h3>
+          <p>تسأل وتاخذ جواب بنفس اللحظة، وتتفاعل مع طلاب ثانيين بنفس المستوى، وكل حصة تنحفظ تكدر ترجعلها بعدين.</p>
+        </div>
+      </div>
+      <div class="stop reveal">
+        <div class="stop-node">٣</div>
+        <div class="stop-body">
+          <div class="stop-tag">اختبارات تفاعلية</div>
+          <h3>تصحيح فوري يوريك مكان الضعف بالضبط</h3>
+          <p>بعد كل درس اختبار قصير يوريك نتيجتك بنفس اللحظة، ويرشحلك أي درس ترجعله إذا غلطت بسؤال معين.</p>
+        </div>
+      </div>
+      <div class="stop reveal">
+        <div class="stop-node">٤</div>
+        <div class="stop-body">
+          <div class="stop-tag">لوحة التقدم</div>
+          <h3>تقرير واضح لك ولأهلك</h3>
+          <p>لوحة تحكم توضحلك وين وصلت بكل مادة، كم ساعة درست، وأي المواضيع تحتاج مراجعة أكثر — تنشارك تلقائي مع ولي أمرك إذا يريد.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="wrap">
+    <div class="strip-item"><div class="display">كل المواد</div><span>حسب صفك ومنهجك</span></div>
+    <div class="strip-item"><div class="display">تعلّم بوقتك</div><span>فيديو ولايف مسجّل</span></div>
+    <div class="strip-item"><div class="display">تصحيح فوري</div><span>اختبارات آلية</span></div>
+    <div class="strip-item"><div class="display">تقارير أهل</div><span>متابعة مستمرة</span></div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="kicker">3 خطوات بس</div>
+    <h2>تبدا مسارك بأقل من دقيقتين</h2>
+    <div class="steps">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <h3>سجّل حسابك</h3>
+        <p>تختار صفك والمواد اللي تحتاجها، ومسار يجهزلك خطة خاصة بيك.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">02</div>
+        <h3>اختر مسارك</h3>
+        <p>تبدا بالدرس اللي يناسب مستواك، أو تخلي مسار يرشحلك ترتيب مقترح.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">03</div>
+        <h3>تابع وتحسّن</h3>
+        <p>بعد كل درس واختبار، لوحتك تتحدث تلقائي وتوريك خطوتك الجاية.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="audience" id="audience">
+  <div class="wrap">
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <h3>للطالب</h3>
+        <ul>
+          <li>محتوى مرتب حسب منهجك، بدون تشتت</li>
+          <li>تكدر تدرس بالسرعة اللي تناسبك</li>
+          <li>تعرف بالضبط وين نقاط ضعفك</li>
+        </ul>
+      </div>
+      <div class="audience-card reveal">
+        <h3>لولي الأمر</h3>
+        <ul>
+          <li>تقرير أسبوعي عن مستوى ابنك أو بنتك</li>
+          <li>وضوح كامل بلا ما تحتاج تسأل كل يوم</li>
+          <li>اطمئنان إن المحتوى مطابق للمنهج الرسمي</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <h2>جاهز تبدا مسارك؟</h2>
+      <p>سجل هسه وابدا أول درس بأقل من دقيقتين.</p>
+      <button class="btn-primary">ابدا مجاناً</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="logo-dot"></span>مسار</div>
+    <div class="muted">منصة تعليمية شاملة — دروس، بث مباشر، اختبارات، ومتابعة تقدم.</div>
+  </div>
+</footer>
+
+<script>
+  const items = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  items.forEach(i => io.observe(i));
+</script>
+
+</body>
+</html>
