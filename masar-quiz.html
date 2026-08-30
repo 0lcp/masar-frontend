@@ -213,4 +213,23 @@ async function init() {
     const data = await res.json();
 
     if (!res.ok) {
-      renderState(
+      renderState(res.status === 402 ? '🔒' : '❌', data.error || 'صار خطأ');
+      return;
+    }
+    if (!data.quiz) {
+      renderState('📭', 'ماكو اختبار لهذا الدرس بعد.');
+      return;
+    }
+
+    quiz = data.quiz;
+    renderQuiz();
+  } catch (err) {
+    renderState('❌', 'ما كدرنا نوصل للسيرفر.');
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>
