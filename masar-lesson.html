@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار — الدرس</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink: #1A1030;
+  --panel: #241B3D;
+  --panel-2: #2E2350;
+  --gold: #FF6F5E;
+  --gold-soft: #FF9587;
+  --teal: #22B07D;
+  --teal-soft: #6EE7B7;
+  --text: #F7F3FF;
+  --muted: #A79FC7;
+  --line: rgba(247,243,255,0.09);
+  --danger: #F43F5E;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--ink); color: var(--text);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  min-height: 100vh;
+}
+.display { font-family:'El Messiri', serif; font-weight:700; }
+
+.topbar {
+  position:sticky; top:0; z-index:20; background: rgba(26,16,48,0.92); backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--line); padding:14px 20px; display:flex; align-items:center;
+  justify-content:space-between; gap:12px;
+}
+.logo { display:flex; align-items:center; gap:8px; font-size:18px; }
+.logo-dot { width:8px; height:8px; border-radius:50%; background: var(--gold); box-shadow:0 0 10px var(--gold); }
+.back-link { color: var(--muted); font-size:13px; text-decoration:none; display:flex; align-items:center; gap:6px; }
+.back-link:hover { color: var(--text); }
+
+.layout { display:flex; max-width:1200px; margin:0 auto; }
+
+/* ---- SIDEBAR: lesson list ---- */
+.lesson-sidebar {
+  width:280px; flex-shrink:0; border-left:1px solid var(--line);
+  padding:20px; min-height: calc(100vh - 61px);
+}
+.subject-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+.subject-sub { font-size:12px; color: var(--muted); margin-bottom:18px; }
+.lesson-item {
+  display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px;
+  cursor:pointer; margin-bottom:4px; font-size:13px; color: var(--muted);
+}
+.lesson-item:hover { background: var(--panel-2); }
+.lesson-item.active { background: var(--panel-2); color: var(--text); }
+.lesson-check {
+  width:20px; height:20px; border-radius:50%; border:2px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:11px;
+}
+.lesson-item.done .lesson-check { background: var(--teal); border-color: var(--teal); color: var(--ink); }
+.lesson-item.active .lesson-check { border-color: var(--gold); }
+.lesson-name { flex:1; }
+.lesson-dur { font-size:11px; color: var(--muted); flex-shrink:0; }
+
+@media (max-width: 880px) { .lesson-sidebar { display:none; } }
+
+/* ---- MAIN CONTENT ---- */
+.lesson-main { flex:1; padding:28px 32px; max-width: 820px; }
+
+.video-box {
+  aspect-ratio: 16/9; background: var(--panel); border:1px solid var(--line); border-radius:18px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  margin-bottom:24px; overflow:hidden;
+}
+.video-box iframe { width:100%; height:100%; border:none; }
+.video-placeholder-icon { font-size:36px; opacity:0.5; }
+.video-placeholder-text { color: var(--muted); font-size:13px; }
+
+.lesson-tag {
+  display:inline-block; font-size:12px; color: var(--gold-soft);
+  border:1px solid rgba(255,111,94,0.3); border-radius:999px; padding:3px 12px; margin-bottom:12px;
+}
+.lesson-title { font-size:24px; margin-bottom:10px; }
+.lesson-desc { color: var(--muted); font-size:15px; line-height:1.8; margin-bottom:24px; }
+
+.action-row { display:flex; gap:12px; align-items:center; margin-bottom:32px; flex-wrap:wrap; }
+.btn-complete {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
+  padding:13px 26px; border-radius:12px; border:none; cursor:pointer;
+}
+.btn-complete:disabled { opacity:0.6; cursor:default; }
+.btn-complete.done { background: var(--teal); }
+.nav-row { display:flex; gap:10px; }
+.btn-nav {
+  background: var(--panel-2); color: var(--text); border:1px solid var(--line);
+  font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer;
+}
+.btn-nav:hover { border-color: var(--gold); }
+.btn-nav:disabled { opacity:0.4; cursor:not-allowed; }
+
+.state-box {
+  background: var(--panel); border:1px solid var(--line); border-radius:16px; padding:40px 24px;
+  text-align:center; color: var(--muted); font-size:14px;
+}
+.state-box .icon { font-size:32px; margin-bottom:12px; }
+.state-box a {
+  display:inline-block; margin-top:16px; background: var(--gold); color: var(--ink);
+  font-weight:700; font-size:13px; padding:11px 22px; border-radius:999px; text-decoration:none;
+}
+
+.mobile-sidebar-toggle { display:none; }
+@media (max-width: 880px) {
+  .mobile-sidebar-toggle {
+    display:block; background: var(--panel-2); color: var(--text); border:1px solid var(--line);
+    font-size:13px; padding:9px 16px; border-radius:10px; margin-bottom:16px; cursor:pointer;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
+  <a href="masar-dashboard.html" class="back-link">← رجوع للوحة</a>
+</div>
+
+<div class="layout">
+  <aside class="lesson-sidebar" id="lessonSidebar">
+    <div class="subject-title" id="sidebarSubjectName">...</div>
+    <div class="subject-sub" id="sidebarSubjectMeta">...</div>
+    <div id="lessonList"><div style="color:var(--muted); font-size:13px;">...جاري التحميل</div></div>
+  </aside>
+
+  <main class="lesson-main">
+    <button class="mobile-sidebar-toggle" onclick="document.getElementById('lessonSidebar').style.display = document.getElementById('lessonSidebar').style.display === 'block' ? 'none' : 'block'">☰ كل دروس المادة</button>
+    <div id="mainContent">
+      <div class="state-box"><div class="icon">⏳</div>...جاري تحميل الدرس</div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+const token = sessionStorage.getItem('masar_token');
+
+const params = new URLSearchParams(location.search);
+let subjectId = params.get('subject');
+let currentLessonId = params.get('lesson');
+
+let subjectData = null;
+let completedIds = new Set();
+
+async function apiGet(path) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+  });
+  const data = await res.json();
+  return { ok: res.ok, status: res.status, data };
+}
+
+function renderState(icon, text, showLoginLink) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="state-box">
+      <div class="icon">${icon}</div>
+      ${text}
+      ${showLoginLink ? '<br><a href="masar-auth.html">سجل دخولك</a>' : ''}
+    </div>`;
+}
+
+function renderSidebar(subject, lessons) {
+  document.getElementById('sidebarSubjectName').textContent = subject.icon + ' ' + subject.name;
+  document.getElementById('sidebarSubjectMeta').textContent = lessons.length + ' درس';
+
+  document.getElementById('lessonList').innerHTML = lessons.map(l => `
+    <div class="lesson-item ${l.id == currentLessonId ? 'active' : ''} ${completedIds.has(l.id) ? 'done' : ''}"
+         onclick="location.href='masar-lesson.html?subject=${subjectId}&lesson=${l.id}'">
+      <div class="lesson-check">${completedIds.has(l.id) ? '✓' : ''}</div>
+      <div class="lesson-name">${l.title}</div>
+      <div class="lesson-dur">${l.duration_minutes}د</div>
+    </div>
+  `).join('');
+}
+
+function renderLesson(lesson, lessons) {
+  const idx = lessons.findIndex(l => l.id == lesson.id);
+  const prev = idx > 0 ? lessons[idx - 1] : null;
+  const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
+  const isDone = completedIds.has(lesson.id);
+
+  const videoInner = lesson.video_url
+    ? `<iframe src="${lesson.video_url}" allowfullscreen></iframe>`
+    : `<div class="video-placeholder-icon">🎬</div><div class="video-placeholder-text">الفيديو قريباً — المحتوى النصي متاح تحت</div>`;
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="video-box">${videoInner}</div>
+    <div class="lesson-tag">${lesson.duration_minutes} دقيقة</div>
+    <h1 class="lesson-title">${lesson.title}</h1>
+    <p class="lesson-desc">${lesson.description || 'ماكو وصف لهذا الدرس بعد.'}</p>
+    <div class="action-row">
+      <button class="btn-complete ${isDone ? 'done' : ''}" id="completeBtn" onclick="markComplete(${lesson.id})" ${isDone ? 'disabled' : ''}>
+        ${isDone ? '✓ تم إكمال الدرس' : 'علّم الدرس كمكتمل'}
+      </button>
+      <button class="btn-nav" id="quizBtn" style="display:none;" onclick="location.href='masar-quiz.html?lesson=${lesson.id}'">📝 خذ الاختبار</button>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" ${!prev ? 'disabled' : ''} onclick="${prev ? `location.href='masar-lesson.html?subject=${subjectId}&lesson=${prev.id}'` : ''}">→ الدرس السابق</button>
+      <button class="btn-nav" ${!next ? 'disabled' : ''} onclick="${next ? `location.href='masar-lesson.html?subject=${subjectId}&lesson=${next.id}'` : ''}">الدرس التالي ←</button>
+    </div>
+  `;
+
+  checkQuizExists(lesson.id);
+}
+
+async function checkQuizExists(lessonId) {
+  try {
+    const { ok, data } = await apiGet(`/content/lessons/${lessonId}/quiz`);
+    if (ok && data.success && data.quiz) {
+      document.getElementById('quizBtn').style.display = 'inline-block';
+    }
+  } catch (err) { /* لا اختبار، عادي */ }
+}
+
+async function markComplete(lessonId) {
+  if (!token) { alert('لازم تسجل دخولك أول'); return; }
+  const btn = document.getElementById('completeBtn');
+  btn.disabled = true; btn.textContent = '...';
+
+  try {
+    const res = await fetch(`${API_BASE}/content/lessons/${lessonId}/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'صار خطأ');
+
+    completedIds.add(lessonId);
+    btn.textContent = '✓ تم إكمال الدرس';
+    btn.classList.add('done');
+    renderSidebar(subjectData.subject, subjectData.subject.lessons);
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.textContent = 'علّم الدرس كمكتمل';
+  }
+}
+
+async function loadCompletedIds() {
+  // القيمة الحقيقية تجي من subject.lessons[].completed مباشرة (شوف init())
+}
+
+async function init() {
+  if (!subjectId && currentLessonId) {
+    // جاي من صفحة الاختبار (بس فيها lesson id) — نجيب المادة من الدرس نفسه
+    const lessonOnly = await apiGet(`/content/lessons/${currentLessonId}`);
+    if (lessonOnly.ok && lessonOnly.data.lesson) {
+      subjectId = lessonOnly.data.lesson.subject_id;
+    }
+  }
+
+  if (!subjectId) {
+    renderState('⚠️', 'ماكو مادة محددة. ارجع للوحتك واختار مادة.', false);
+    return;
+  }
+
+  const { ok, status, data } = await apiGet(`/content/subjects/${subjectId}`);
+
+  if (!ok) {
+    renderState('❌', data.error || 'صار خطأ بجلب المادة', false);
+    return;
+  }
+
+  if (data.locked) {
+    renderState('🔒', data.message || 'هذي مادة مدفوعة — فعّل اشتراكك أول', false);
+    document.getElementById('mainContent').innerHTML += `<div class="state-box" style="margin-top:12px;"><a href="masar-dashboard.html">ارجع للوحة وفعّل مفتاح</a></div>`;
+    return;
+  }
+
+  subjectData = data;
+  const lessons = data.subject.lessons || [];
+  lessons.forEach(l => { if (l.completed) completedIds.add(l.id); });
+
+  if (!lessons.length) {
+    renderState('📭', 'ماكو دروس بهذي المادة بعد.', false);
+    return;
+  }
+
+  if (!currentLessonId) currentLessonId = lessons[0].id;
+
+  renderSidebar(data.subject, lessons);
+
+  const lessonRes = await apiGet(`/content/lessons/${currentLessonId}`);
+  if (!lessonRes.ok) {
+    if (lessonRes.status === 402) {
+      renderState('🔒', 'هذا الدرس بمادة مدفوعة — فعّل اشتراكك أول', false);
+    } else {
+      renderState('❌', lessonRes.data.error || 'صار خطأ بجلب الدرس', false);
+    }
+    return;
+  }
+
+  renderLesson(lessonRes.data.lesson, lessons);
+}
+
+init();
+</script>
+
+</body>
+</html>
