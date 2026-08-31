@@ -170,11 +170,22 @@ form { display:flex; flex-direction:column; gap: 16px; }
       </div>
       <div class="row-between">
         <label class="checkbox-row"><input type="checkbox"> خليني داخل</label>
-        <a href="#" class="link">نسيت كلمة المرور؟</a>
+        <a href="#" class="link" onclick="toggleForgotBox();return false;">نسيت كلمة المرور؟</a>
       </div>
       <div class="form-msg" id="loginMsg"></div>
       <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
     </form>
+
+    <div id="forgotBox" style="display:none; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رابط استعادة كلمة المرور:</p>
+      <form onsubmit="return submitForgotPassword(event)">
+        <div class="field">
+          <input type="email" id="forgotEmail" placeholder="بريدك الإلكتروني" required>
+        </div>
+        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رابط الاستعادة</button>
+        <div class="form-msg" id="forgotMsg"></div>
+      </form>
+    </div>
   </div>
 
   <!-- SIGNUP -->
@@ -191,7 +202,7 @@ form { display:flex; flex-direction:column; gap: 16px; }
       </div>
       <div class="field" id="signupEmailField">
         <label for="signupEmail">البريد الإلكتروني</label>
-        <input type="email" id="signupEmail" placeholder="مثال: ahmed@email.com">
+        <input type="email" id="signupEmail" placeholder="مثال: example@email.com">
         <span class="field-error">دخّل بريد إلكتروني صحيح</span>
       </div>
       <div class="field" id="gradeField">
@@ -228,6 +239,39 @@ form { display:flex; flex-direction:column; gap: 16px; }
 </div>
 
 <script>
+function toggleForgotBox() {
+  const box = document.getElementById('forgotBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+async function submitForgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+  const msgEl = document.getElementById('forgotMsg');
+  const btn = document.getElementById('forgotBtn');
+
+  btn.disabled = true; btn.textContent = '...جاري الإرسال';
+
+  try {
+    const res = await fetch(`${API_BASE}/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+
+    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رابط الاستعادة';
+    msgEl.className = 'form-msg show success';
+  } catch (err) {
+    msgEl.textContent = 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال.';
+    msgEl.className = 'form-msg show error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'إرسال رابط الاستعادة';
+  }
+  return false;
+}
+
 function showPanel(which) {
   const isLogin = which === 'login';
   document.getElementById('loginPanel').classList.toggle('active', isLogin);
