@@ -341,7 +341,7 @@ async function submitLogin() {
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      showMsg('signupMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
+      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
       return false;
     }
 
@@ -390,7 +390,7 @@ async function submitSignup() {
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
+      showMsg('signupMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
       return false;
     }
 
