@@ -341,9 +341,11 @@ async function submitLogin() {
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
-      return false;
-    }
+  const serverError = data.error || data.message || JSON.stringify(data);
+  showMsg('signupMsg', 'سبب الخطأ من السيرفر: ' + serverError, 'error');
+  return false;
+}
+
 
     // خزّن التوكن محلياً لهذي الجلسة، واستخدمه بأي طلب لاحق للـ API
     sessionStorage.setItem('masar_token', data.access_token);
