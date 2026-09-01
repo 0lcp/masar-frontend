@@ -390,10 +390,9 @@ async function submitSignup() {
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-  const serverError = data.error || data.message || JSON.stringify(data);
-  showMsg('signupMsg', 'سبب الخطأ من السيرفر: ' + serverError, 'error');
-  return false;
-}
+      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
+      return false;
+    }
 
 
     showMsg('signupMsg', data.message || 'تم إنشاء الحساب! تحقق من إيميلك لتفعيله', 'success');
