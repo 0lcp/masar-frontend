@@ -196,7 +196,7 @@
             <button type="submit" class="submit-btn" id="loginBtn">دخول</button>
         </form>
 
-        <!-- 2. نموذج إنشاء حساب جديد -->
+        <!-- 2. نموذج إنشاء حساب جديد - المرحلة الأولى -->
         <form id="registerForm" class="form-step">
             <div class="form-group">
                 <label>الاسم الكامل</label>
@@ -222,7 +222,16 @@
                 <label>كلمة المرور (8 أحرف أو أكثر)</label>
                 <input type="password" id="regPassword" required minlength="8" placeholder="••••••••">
             </div>
-            <button type="submit" class="submit-btn" id="registerBtn">إنشاء الحساب</button>
+            <button type="submit" class="submit-btn" id="registerBtn">إرسال رمز التوثيق</button>
+        </form>
+
+        <!-- 2.1 نموذج إدخال رمز OTP الخاص بالتسجيل -->
+        <form id="verifyRegisterForm" class="form-step">
+            <div class="form-group">
+                <label>أدخل رمز التوثيق المكون من 6 أرقام المرسل لإيميلك</label>
+                <input type="text" id="regCode" maxlength="6" required placeholder="123456" style="text-align: center; letter-spacing: 4px; font-weight: bold; font-size: 18px;">
+            </div>
+            <button type="submit" class="submit-btn" id="verifyRegisterBtn">تأكيد الحساب والدخول</button>
         </form>
 
         <!-- 3. نموذج طلب رمز نسيت كلمة المرور -->
@@ -252,6 +261,8 @@
     <script>
         const API_BASE = 'https://masar-backend.onrender.com/api/auth';
         const DASHBOARD_PAGE = 'masar-dashboard.html';
+
+        let regTempData = {};
 
         function showAlert(message, type = 'error') {
             const alertBox = document.getElementById('alertBox');
@@ -290,20 +301,58 @@
             document.getElementById('forgotForm').classList.add('active');
         }
 
-        // --- 1. معالجة إنشاء حساب جديد (مع التوجيه التلقائي) ---
+        // --- 1. طلب رمز OTP لإنشاء الحساب ---
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             hideAlert();
 
             const btn = document.getElementById('registerBtn');
             btn.disabled = true;
-            btn.innerText = 'جاري إنشاء الحساب...';
+            btn.innerText = 'جاري إرسال الرمز...';
 
-            const payload = {
+            regTempData = {
                 full_name: document.getElementById('regFullName').value.trim(),
                 email: document.getElementById('regEmail').value.trim(),
                 grade: document.getElementById('regGrade').value,
                 password: document.getElementById('regPassword').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/send-register-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: regTempData.email })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showAlert('تم إرسال رمز التوثيق إلى بريدك الإلكتروني بنجاح', 'success');
+                    document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
+                    document.getElementById('verifyRegisterForm').classList.add('active');
+                } else {
+                    showAlert(data.error || 'حدث خطأ أثناء إرسال الرمز');
+                }
+            } catch (err) {
+                showAlert('تعذر الاتصال بالسيرفر.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'إرسال رمز التوثيق';
+            }
+        });
+
+        // --- 1.1 تأكيد رمز OTP وإنشاء الحساب النهائي ---
+        document.getElementById('verifyRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+
+            const btn = document.getElementById('verifyRegisterBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري التحقق والتأكيد...';
+
+            const payload = {
+                ...regTempData,
+                code: document.getElementById('regCode').value.trim()
             };
 
             try {
@@ -312,25 +361,27 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    showAlert('تم إنشاء الحساب بنجاح! جاري توجيهك...', 'success');
+                    showAlert('تم تفعيل الحساب بنجاح! جاري التوجيه...', 'success');
                     
-                    if (data.token) localStorage.setItem('masar_token', data.token);
+                    const token = data.token || data.access_token;
+                    if (token) localStorage.setItem('masar_token', token);
                     if (data.user) localStorage.setItem('masar_user', JSON.stringify(data.user));
 
                     setTimeout(() => {
                         window.location.href = DASHBOARD_PAGE;
                     }, 1200);
                 } else {
-                    showAlert(data.error || 'فشل إنشاء الحساب');
+                    showAlert(data.error || 'رمز التوثيق غير صحيح');
                 }
             } catch (err) {
-                showAlert('تعذر الاتصال بالسيرفر، يرجى إعادة المحاولة.');
+                showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'إنشاء الحساب';
+                btn.innerText = 'تأكيد الحساب والدخول';
             }
         });
 
@@ -366,7 +417,7 @@
                     showAlert(data.error || 'البريد أو كلمة المرور غير صحيحة');
                 }
             } catch (err) {
-                showAlert('تعذر الاتصال بالسيرفر، يرجى التأكد من النت.');
+                showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'دخول';
