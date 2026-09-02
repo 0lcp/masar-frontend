@@ -290,7 +290,6 @@ function setError(fieldId, hasError) {
   field.classList.toggle('has-error', hasError);
 }
 
-// عنوان الباك اند — غيّره إذا شغّلته على سيرفر أو منفذ (port) مختلف
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
 
 function showMsg(id, text, type) {
@@ -345,11 +344,17 @@ async function submitLogin() {
       return false;
     }
 
+    // 1. تخزين التوكن وبيانات المستخدم في ذاكرة المتصفح
+    localStorage.setItem('masar_token', data.access_token);
+    localStorage.setItem('masar_user', JSON.stringify(data.user));
 
-    // خزّن التوكن محلياً لهذي الجلسة، واستخدمه بأي طلب لاحق للـ API
-    sessionStorage.setItem('masar_token', data.access_token);
-    showMsg('loginMsg', `هلا ${data.user.full_name} 👋 تم تسجيل الدخول بنجاح`, 'success');
-    // بالمشروع الحقيقي: location.href = 'masar-dashboard.html';
+    showMsg('loginMsg', `هلا ${data.user.full_name || ''} 👋 تم تسجيل الدخول بنجاح! جاري تحويلك...`, 'success');
+
+    // 2. التحويل التلقائي لصفحة الداشبورد الرئيسية للمستخدم
+    setTimeout(() => {
+      window.location.href = 'masar-dashboard.html'; // مسار صفحة الداشبورد
+    }, 1200);
+
   } catch (err) {
     showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
   } finally {
@@ -394,8 +399,14 @@ async function submitSignup() {
       return false;
     }
 
+    showMsg('signupMsg', data.message || 'تم إنشاء الحساب بنجاح! جاري التوهيج لدخول الحساب...', 'success');
 
-    showMsg('signupMsg', data.message || 'تم إنشاء الحساب! تحقق من إيميلك لتفعيله', 'success');
+    // التحويل التلقائي لتبويب "تسجيل الدخول" بعد إنشاء الحساب بنجاح
+    setTimeout(() => {
+      showPanel('login');
+      document.getElementById('loginEmail').value = email;
+    }, 2000);
+
   } catch (err) {
     showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
   } finally {
