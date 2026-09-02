@@ -96,9 +96,6 @@ body {
 
 /* ---------- SUBJECT PATH ---------- */
 .subjects { display:flex; flex-direction:column; gap:0; margin-bottom: 38px; }
-.subjects::before {
-  content:none;
-}
 .subject-row {
   position:relative;
   display:flex; align-items:center; gap:18px;
@@ -225,7 +222,7 @@ body {
   <main class="main">
     <div class="auth-guard" id="authGuard">
       <span>لازم تسجل دخولك عشان تشوف بياناتك الحقيقية — هذا عرض تجريبي حالياً.</span>
-      <a href="masar-auth.html">سجل دخولك</a>
+      <a href="masar-dashboard.html">سجل دخولك</a>
     </div>
 
     <div class="topbar">
@@ -315,20 +312,29 @@ body {
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
 const token = localStorage.getItem('masar_token');
 
-const subjectIcons = { }; // backend already sends an icon emoji per subject
-
 async function apiGet(path) {
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    },
   });
+  
   const data = await res.json();
+  
+  if (res.status === 401) {
+    localStorage.removeItem('masar_token');
+    localStorage.removeItem('masar_user');
+    throw new Error('انتهت الجلسة، يرجى تسجيل الدخول مجدداً');
+  }
+
   if (!res.ok || !data.success) throw new Error(data.error || 'فشل الطلب');
   return data;
 }
 
 function renderSubjects(subjects) {
   const container = document.getElementById('subjectsContainer');
-  if (!subjects.length) {
+  if (!subjects || !subjects.length) {
     container.innerHTML = '<div class="empty-state">ما فيه مواد مضافة لصفك بعد.</div>';
     return;
   }
@@ -343,8 +349,8 @@ function renderSubjects(subjects) {
       </div>
       ${locked ? '' : `
       <div class="subj-progress">
-        <div class="pct">${s.percent}٪</div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${s.percent}%"></div></div>
+        <div class="pct">${s.percent || 0}٪</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${s.percent || 0}%"></div></div>
       </div>`}
       ${locked
         ? `<button class="subj-btn unlock-btn" onclick="toggleRedeemBox(true)">اشترك الحين</button>`
@@ -355,7 +361,6 @@ function renderSubjects(subjects) {
 }
 
 function renderDemoSubjects() {
-  // بيانات توضيحية تظهر لمن ما يكون مسجل دخول، بس بدون progress حقيقي
   const demo = [
     { icon:'📐', subject_name:'الرياضيات', lessons_done:0, lessons_total:3, percent:0, locked:false },
     { icon:'🧪', subject_name:'الكيمياء', lessons_done:0, lessons_total:3, percent:0, locked:false },
@@ -386,7 +391,10 @@ async function redeemKey() {
   try {
     const res = await fetch(`${API_BASE}/subscription/redeem`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${token}` 
+      },
       body: JSON.stringify({ code }),
     });
     const data = await res.json();
@@ -395,7 +403,7 @@ async function redeemKey() {
     msgEl.textContent = data.message;
     msgEl.className = 'redeem-msg show success';
     input.value = '';
-    loadDashboard(); // نحدث المواد عشان تنفتح المقفولة
+    loadDashboard(); 
   } catch (err) {
     msgEl.textContent = err.message;
     msgEl.className = 'redeem-msg show error';
@@ -418,17 +426,18 @@ async function loadDashboard() {
   try {
     const meData = await apiGet('/auth/me');
     const user = meData.user;
-    document.getElementById('greeting').textContent = `هلا ${user.full_name.split(' ')[0]} 👋`;
-    document.getElementById('sidebarName').textContent = user.full_name;
+    
+    document.getElementById('greeting').textContent = `هلا ${user.full_name ? user.full_name.split(' ')[0] : ''} 👋`;
+    document.getElementById('sidebarName').textContent = user.full_name || 'طالب';
     document.getElementById('sidebarGrade').textContent = user.grade || '—';
 
     const progressData = await apiGet('/content/progress');
-    document.getElementById('overallPct').textContent = progressData.overall_percent + '٪';
-    document.getElementById('overallFill').style.width = progressData.overall_percent + '%';
-    document.getElementById('lessonsDone').textContent = progressData.lessons_done;
-    document.getElementById('lessonsTotal').textContent = progressData.lessons_total;
+    document.getElementById('overallPct').textContent = (progressData.overall_percent || 0) + '٪';
+    document.getElementById('overallFill').style.width = (progressData.overall_percent || 0) + '%';
+    document.getElementById('lessonsDone').textContent = progressData.lessons_done || 0;
+    document.getElementById('lessonsTotal').textContent = progressData.lessons_total || 0;
 
-    renderSubjects(progressData.subjects);
+    renderSubjects(progressData.subjects || []);
   } catch (err) {
     document.getElementById('authGuard').classList.add('show');
     document.getElementById('authGuard').querySelector('span').textContent =
