@@ -124,12 +124,21 @@ form { display:flex; flex-direction:column; gap: 16px; }
 
 .form-msg {
   display:none; font-size: 13px; border-radius: 10px; padding: 10px 14px; line-height:1.5;
+  white-space: pre-wrap; word-break: break-word; font-family: 'IBM Plex Sans Arabic', monospace;
 }
 .form-msg.show { display:block; }
 .form-msg.error { background: rgba(244,63,94,0.12); color: #FB7185; border: 1px solid rgba(244,63,94,0.3); }
 .form-msg.success { background: rgba(34,176,125,0.14); color: var(--teal-soft); border: 1px solid rgba(34,176,125,0.35); }
 
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform:none; box-shadow:none; }
+
+.debug-box {
+  margin-top: 14px; padding: 10px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.04); border: 1px dashed var(--line);
+  font-size: 11px; color: var(--muted); font-family: monospace; line-height:1.6;
+  white-space: pre-wrap; word-break: break-all; display:none;
+}
+.debug-box.show { display:block; }
 </style>
 </head>
 <body>
@@ -173,6 +182,7 @@ form { display:flex; flex-direction:column; gap: 16px; }
         <a href="#" class="link" onclick="toggleForgotBox();return false;">نسيت كلمة المرور؟</a>
       </div>
       <div class="form-msg" id="loginMsg"></div>
+      <div class="debug-box" id="loginDebug"></div>
       <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
     </form>
 
@@ -229,6 +239,7 @@ form { display:flex; flex-direction:column; gap: 16px; }
         موافق على <a href="#" class="link">الشروط</a> و<a href="#" class="link">سياسة الخصوصية</a>
       </label>
       <div class="form-msg" id="signupMsg"></div>
+      <div class="debug-box" id="signupDebug"></div>
       <button type="submit" class="btn-submit" id="signupBtn">إنشاء الحساب</button>
     </form>
   </div>
@@ -304,6 +315,21 @@ function clearMsg(id) {
   el.className = 'form-msg';
 }
 
+// جديد: يطبع تفاصيل تشخيصية بمربع صغير تحت الرسالة (يفيد بالموبايل بدون أدوات مطور)
+function showDebug(id, lines) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = lines.join('\n');
+  el.className = 'debug-box show';
+}
+
+function clearDebug(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'debug-box';
+  el.textContent = '';
+}
+
 function setLoading(btnId, loading, idleText) {
   const btn = document.getElementById(btnId);
   btn.disabled = loading;
@@ -322,6 +348,7 @@ async function handleSubmit(e, type) {
 
 async function submitLogin() {
   clearMsg('loginMsg');
+  clearDebug('loginDebug');
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPass').value;
 
@@ -329,29 +356,55 @@ async function submitLogin() {
   const passOk = pass.length >= 8;
   setError('loginEmailField', !emailOk);
   setError('loginPassField', !passOk);
-  if (!emailOk || !passOk) return false;
+  if (!emailOk || !passOk) {
+    // جديد: نوضح بالضبط ليش ما انرسل الطلب أصلاً
+    showDebug('loginDebug', [
+      'الطلب ما انرسل — فشل التحقق المحلي:',
+      'الإيميل صحيح؟ ' + (emailOk ? 'نعم' : 'لا (لازم أطول من 3 أحرف)'),
+      'كلمة المرور صحيحة؟ ' + (passOk ? 'نعم' : 'لا (لازم 8 أحرف أو أكثر، الحالي: ' + pass.length + ')')
+    ]);
+    return false;
+  }
 
+  const url = `${API_BASE}/login`;
   setLoading('loginBtn', true);
   try {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass }),
     });
-    const data = await res.json();
 
-    if (!res.ok || !data.success) {
-      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
+    let data = null;
+    let parseError = null;
+    try {
+      data = await res.json();
+    } catch (jsonErr) {
+      parseError = jsonErr.message;
+    }
+
+    if (!res.ok || !data || !data.success) {
+      showMsg('loginMsg', (data && data.error) || 'صار خطأ، حاول مرة ثانية', 'error');
+      showDebug('loginDebug', [
+        'الرابط: ' + url,
+        'كود الاستجابة: ' + res.status + ' ' + res.statusText,
+        'محتوى الرد: ' + (data ? JSON.stringify(data) : ('تعذر قراءة JSON — ' + parseError))
+      ]);
       return false;
     }
 
-
-    // خزّن التوكن محلياً لهذي الجلسة، واستخدمه بأي طلب لاحق للـ API
     sessionStorage.setItem('masar_token', data.access_token);
     showMsg('loginMsg', `هلا ${data.user.full_name} 👋 تم تسجيل الدخول بنجاح`, 'success');
     // بالمشروع الحقيقي: location.href = 'masar-dashboard.html';
   } catch (err) {
-    showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
+    // جديد: نفرّق بين خطأ شبكة/CORS وأي خطأ JS آخر، ونعرض تفاصيل الخطأ الفعلية
+    showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر', 'error');
+    showDebug('loginDebug', [
+      'الرابط اللي حاولنا نوصله: ' + url,
+      'نوع الخطأ: ' + err.name,
+      'رسالة الخطأ: ' + err.message,
+      'ملاحظة: لو الرسالة تحتوي "Failed to fetch" فغالباً المشكلة شبكة/CORS/الباك اند نايم، مو كود الفرونت اند.'
+    ]);
   } finally {
     setLoading('loginBtn', false, 'دخول');
   }
@@ -360,6 +413,7 @@ async function submitLogin() {
 
 async function submitSignup() {
   clearMsg('signupMsg');
+  clearDebug('signupDebug');
   const full_name = document.getElementById('fullName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const grade = document.getElementById('grade').value;
@@ -374,30 +428,57 @@ async function submitSignup() {
   setError('signupEmailField', !emailOk);
   setError('gradeField', !gradeOk);
   setError('signupPassField', !passOk);
-  if (!nameOk || !emailOk || !gradeOk || !passOk) return false;
+  if (!nameOk || !emailOk || !gradeOk || !passOk) {
+    showDebug('signupDebug', [
+      'الطلب ما انرسل — فشل التحقق المحلي:',
+      'الاسم صحيح؟ ' + (nameOk ? 'نعم' : 'لا (لازم 3 أحرف أو أكثر)'),
+      'الإيميل صحيح؟ ' + (emailOk ? 'نعم' : 'لا (تنسيق غير صحيح: "' + email + '")'),
+      'الصف محدد؟ ' + (gradeOk ? 'نعم' : 'لا'),
+      'كلمة المرور صحيحة؟ ' + (passOk ? 'نعم' : 'لا (الحالي: ' + password.length + ' حرف)')
+    ]);
+    return false;
+  }
   if (!termsOk) {
     showMsg('signupMsg', 'لازم توافق على الشروط وسياسة الخصوصية', 'error');
     return false;
   }
 
+  const url = `${API_BASE}/register`;
   setLoading('signupBtn', true);
   try {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name, email, password, grade }),
     });
-    const data = await res.json();
 
-    if (!res.ok || !data.success) {
-      showMsg('signupMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
+    let data = null;
+    let parseError = null;
+    try {
+      data = await res.json();
+    } catch (jsonErr) {
+      parseError = jsonErr.message;
+    }
+
+    if (!res.ok || !data || !data.success) {
+      showMsg('signupMsg', (data && data.error) || 'صار خطأ، حاول مرة ثانية', 'error');
+      showDebug('signupDebug', [
+        'الرابط: ' + url,
+        'كود الاستجابة: ' + res.status + ' ' + res.statusText,
+        'محتوى الرد: ' + (data ? JSON.stringify(data) : ('تعذر قراءة JSON — ' + parseError))
+      ]);
       return false;
     }
 
-
     showMsg('signupMsg', data.message || 'تم إنشاء الحساب! تحقق من إيميلك لتفعيله', 'success');
   } catch (err) {
-    showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
+    showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر', 'error');
+    showDebug('signupDebug', [
+      'الرابط اللي حاولنا نوصله: ' + url,
+      'نوع الخطأ: ' + err.name,
+      'رسالة الخطأ: ' + err.message,
+      'ملاحظة: لو الرسالة تحتوي "Failed to fetch" فغالباً المشكلة شبكة/CORS/الباك اند نايم، مو كود الفرونت اند.'
+    ]);
   } finally {
     setLoading('signupBtn', false, 'إنشاء الحساب');
   }
