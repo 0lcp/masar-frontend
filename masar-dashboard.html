@@ -30,10 +30,9 @@ body {
 }
 .display { font-family:'El Messiri', serif; font-weight:700; }
 
-/* ---------- LAYOUT ---------- */
 .app { display:flex; min-height:100vh; }
 
-/* ---------- SIDEBAR ---------- */
+/* SIDEBAR */
 .sidebar {
   width: 240px; flex-shrink:0;
   background: var(--panel);
@@ -57,16 +56,14 @@ body {
 .nav-item.active .dot { background: var(--gold); box-shadow:0 0 6px var(--gold); }
 
 .sidebar-bottom { margin-top:auto; }
-.profile-mini { display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; background: var(--panel-2); }
+.profile-mini { display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; background: var(--panel-2); cursor:pointer; }
 .avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--teal-soft)); flex-shrink:0; }
 .profile-mini .pname { font-size:13px; font-weight:600; }
 .profile-mini .pgrade { font-size:11px; color: var(--muted); }
 
-@media (max-width: 880px) {
-  .sidebar { display:none; }
-}
+@media (max-width: 880px) { .sidebar { display:none; } }
 
-/* ---------- MAIN ---------- */
+/* MAIN */
 .main { flex:1; padding: 30px 34px; max-width: 1100px; }
 
 .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 30px; flex-wrap:wrap; gap:14px; }
@@ -74,11 +71,11 @@ body {
 .topbar .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
 .streak {
   display:flex; align-items:center; gap:8px; background: var(--panel);
-  border:1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size:13px;
+  border:1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size:13px; cursor:pointer;
 }
 .streak strong { color: var(--gold-soft); }
 
-/* ---------- OVERVIEW STRIP ---------- */
+/* OVERVIEW */
 .overview { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
 @media (max-width: 720px) { .overview { grid-template-columns: 1fr; } }
 .ov-card { background: var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; }
@@ -87,21 +84,20 @@ body {
 .ov-card .value.gold { color: var(--gold); }
 .ov-card .value.teal { color: var(--teal-soft); }
 .progress-bar { height:6px; border-radius:999px; background: var(--panel-2); margin-top:12px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:999px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
+.progress-fill { height:100%; border-radius:999px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); transition: width 0.4s ease; }
 
-/* ---------- SECTION HEAD ---------- */
+/* SUBJECTS */
 .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
 .section-head h2 { font-size: 18px; }
-.section-head .link { color: var(--gold-soft); font-size:13px; text-decoration:none; }
+.section-head .link { color: var(--gold-soft); font-size:13px; text-decoration:none; cursor:pointer; }
 
-/* ---------- SUBJECT PATH ---------- */
 .subjects { display:flex; flex-direction:column; gap:0; margin-bottom: 38px; }
 .subject-row {
-  position:relative;
-  display:flex; align-items:center; gap:18px;
+  position:relative; display:flex; align-items:center; gap:18px;
   background: var(--panel); border:1px solid var(--line); border-radius:16px;
-  padding: 16px 18px; margin-bottom: 12px;
+  padding: 16px 18px; margin-bottom: 12px; transition: transform 0.2s, border-color 0.2s;
 }
+.subject-row:hover { border-color: rgba(255,111,94,0.3); }
 .subj-icon {
   width:44px; height:44px; border-radius:12px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center; font-size:18px;
@@ -114,18 +110,16 @@ body {
 .subj-progress .pct { font-size:12px; color: var(--muted); text-align:left; margin-bottom:6px; }
 .subj-btn {
   background: var(--panel-2); color: var(--text); border:1px solid var(--line);
-  border-radius:10px; padding: 9px 16px; font-size:13px; cursor:pointer; flex-shrink:0;
+  border-radius:10px; padding: 9px 16px; font-size:13px; cursor:pointer; flex-shrink:0; transition: all 0.2s;
 }
 .subj-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
-@media (max-width: 620px) {
-  .subj-progress { display:none; }
-}
+@media (max-width: 620px) { .subj-progress { display:none; } }
 
 .subject-row.locked { opacity: 0.85; }
 .lock-badge { font-size:16px; }
 .subj-btn.unlock-btn { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight:700; }
-.subj-btn.unlock-btn:hover { color: var(--ink); }
 
+/* REDEEM BOX */
 .redeem-box {
   background: var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px;
   margin-bottom:24px; display:none;
@@ -146,11 +140,10 @@ body {
 .redeem-msg.error { color:#FB7185; }
 .redeem-msg.success { color: var(--teal-soft); }
 
-/* ---------- TWO COL ---------- */
+/* TWO COL */
 .two-col { display:grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
 @media (max-width: 880px) { .two-col { grid-template-columns: 1fr; } }
 
-/* live class card */
 .live-card {
   background: linear-gradient(160deg, var(--panel-2), var(--panel));
   border:1px solid var(--line); border-radius:18px; padding:24px;
@@ -164,14 +157,12 @@ body {
 .live-card .meta { color: var(--muted); font-size:13px; margin-bottom:18px; }
 .btn-join {
   background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
-  padding: 12px 24px; border-radius: 999px; border:none; cursor:pointer;
+  padding: 12px 24px; border-radius: 999px; border:none; cursor:pointer; transition: transform 0.15s;
 }
+.btn-join:active { transform: scale(0.97); }
 
-/* recommendation card */
-.reco-card {
-  background: var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px;
-}
-.reco-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+.reco-card { background: var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; }
+.reco-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); cursor:pointer; }
 .reco-item:last-child { border-bottom:none; }
 .reco-tag {
   width:32px; height:32px; border-radius:10px; background: var(--panel-2);
@@ -180,6 +171,7 @@ body {
 .reco-text { font-size:13px; }
 .reco-text .t1 { color: var(--text); margin-bottom:2px; }
 .reco-text .t2 { color: var(--muted); font-size:12px; }
+
 .auth-guard {
   display:none; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
   background: rgba(255,111,94,0.1); border:1px solid rgba(255,111,94,0.35);
@@ -191,7 +183,6 @@ body {
   padding: 9px 20px; border-radius: 999px; text-decoration:none; flex-shrink:0;
 }
 .empty-state { color: var(--muted); font-size:14px; padding: 20px; text-align:center; }
-
 </style>
 </head>
 <body>
@@ -201,19 +192,19 @@ body {
   <aside class="sidebar">
     <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
     <nav class="nav-group">
-      <div class="nav-item active"><span class="dot"></span>الرئيسية</div>
-      <div class="nav-item"><span class="dot"></span>موادي</div>
-      <div class="nav-item"><span class="dot"></span>البث المباشر</div>
-      <div class="nav-item"><span class="dot"></span>الاختبارات</div>
-      <div class="nav-item"><span class="dot"></span>تقرير تقدمي</div>
-      <div class="nav-item"><span class="dot"></span>الإعدادات</div>
+      <div class="nav-item active" onclick="selectNav(this, 'الرئيسية')"><span class="dot"></span>الرئيسية</div>
+      <div class="nav-item" onclick="selectNav(this, 'موادي')"><span class="dot"></span>موادي</div>
+      <div class="nav-item" onclick="selectNav(this, 'البث المباشر')"><span class="dot"></span>البث المباشر</div>
+      <div class="nav-item" onclick="selectNav(this, 'الاختبارات')"><span class="dot"></span>الاختبارات</div>
+      <div class="nav-item" onclick="selectNav(this, 'تقرير تقدمي')"><span class="dot"></span>تقرير تقدمي</div>
+      <div class="nav-item" onclick="selectNav(this, 'الإعدادات')"><span class="dot"></span>الإعدادات</div>
     </nav>
     <div class="sidebar-bottom">
-      <div class="profile-mini">
+      <div class="profile-mini" onclick="logout()">
         <div class="avatar"></div>
         <div>
           <div class="pname" id="sidebarName">...</div>
-          <div class="pgrade" id="sidebarGrade">...</div>
+          <div class="pgrade" id="sidebarGrade">اضغط لتسجيل الخروج</div>
         </div>
       </div>
     </div>
@@ -221,8 +212,8 @@ body {
 
   <main class="main">
     <div class="auth-guard" id="authGuard">
-      <span>لازم تسجل دخولك عشان تشوف بياناتك الحقيقية — هذا عرض تجريبي حالياً.</span>
-      <a href="masar-dashboard.html">سجل دخولك</a>
+      <span id="authGuardText">ما كدرنا نجيب بياناتك. تأكد إن الباك اند شغّال أو سجل دخولك.</span>
+      <a href="masar-auth.html">سجل دخولك</a>
     </div>
 
     <div class="topbar">
@@ -230,7 +221,7 @@ body {
         <h1 id="greeting">هلا 👋</h1>
         <div class="sub">هذا وين وصلت بمسارك هالأسبوع</div>
       </div>
-      <div class="streak">🔥 سلسلة مذاكرة: <strong>6 أيام</strong></div>
+      <div class="streak" onclick="alert('🔥 أنت مستمر بالدراسة للأسبوع الحالي!')">🔥 سلسلة مذاكرة: <strong>6 أيام</strong></div>
     </div>
 
     <div class="overview">
@@ -264,7 +255,7 @@ body {
     </div>
 
     <div class="subjects" id="subjectsContainer">
-      <div class="subject-row" id="subjectsLoading">
+      <div class="subject-row">
         <div class="subj-body"><div class="subj-name">...جاري تحميل موادك</div></div>
       </div>
     </div>
@@ -274,28 +265,28 @@ body {
         <div class="live-badge"><span class="live-dot"></span>يبدا بعد 25 دقيقة</div>
         <h3>مراجعة الفيزياء — قانون نيوتن الثاني</h3>
         <div class="meta">الأستاذ محمد جاسم · حصة تفاعلية 60 دقيقة</div>
-        <button class="btn-join">انضم للحصة</button>
+        <button class="btn-join" onclick="alert('جاري تجهيز غرفة البث المباشر...')">انضم للحصة</button>
       </div>
 
       <div class="reco-card">
         <div class="section-head" style="margin-bottom:14px;">
           <h2 style="font-size:15px;">مقترح إلك</h2>
         </div>
-        <div class="reco-item">
+        <div class="reco-item" onclick="alert('فتح درس التفاعلات المزدوجة...')">
           <div class="reco-tag">↻</div>
           <div class="reco-text">
             <div class="t1">راجع درس "التفاعلات المزدوجة"</div>
             <div class="t2">أخطأت بيه 3 أسئلة بآخر اختبار</div>
           </div>
         </div>
-        <div class="reco-item">
+        <div class="reco-item" onclick="alert('بدء الاختبار القصير...')">
           <div class="reco-tag">✓</div>
           <div class="reco-text">
             <div class="t1">اختبار قصير — المعادلات التربيعية</div>
             <div class="t2">10 أسئلة · 8 دقايق</div>
           </div>
         </div>
-        <div class="reco-item">
+        <div class="reco-item" onclick="alert('فتح الدرس القادم...')">
           <div class="reco-tag">▶</div>
           <div class="reco-text">
             <div class="t1">شاهد درس "التفاعلات الكيميائية 4"</div>
@@ -311,6 +302,19 @@ body {
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
 const token = localStorage.getItem('masar_token');
+
+function selectNav(element, sectionName) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  element.classList.add('active');
+}
+
+function logout() {
+  if (confirm('هل تريد تسجيل الخروج؟')) {
+    localStorage.removeItem('masar_token');
+    localStorage.removeItem('masar_user');
+    window.location.href = 'masar-auth.html';
+  }
+}
 
 async function apiGet(path) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -345,7 +349,7 @@ function renderSubjects(subjects) {
       <div class="subj-icon">${s.icon || '📘'}</div>
       <div class="subj-body">
         <div class="subj-name">${s.subject_name} ${locked ? '<span class="lock-badge">🔒</span>' : ''}</div>
-        <div class="subj-meta">${locked ? 'مادة مدفوعة — فعّل اشتراكك لتفتحها' : `${s.lessons_done} من ${s.lessons_total} دروس مكتملة`}</div>
+        <div class="subj-meta">${locked ? 'مادة مدفوعة — فعّل اشتراكك لتفتحها' : `${s.lessons_done || 0} من ${s.lessons_total || 0} دروس مكتملة`}</div>
       </div>
       ${locked ? '' : `
       <div class="subj-progress">
@@ -354,15 +358,19 @@ function renderSubjects(subjects) {
       </div>`}
       ${locked
         ? `<button class="subj-btn unlock-btn" onclick="toggleRedeemBox(true)">اشترك الحين</button>`
-        : `<button class="subj-btn" onclick="location.href='masar-lesson.html?subject=${s.subject_id}'">تكملة</button>`}
+        : `<button class="subj-btn" onclick="openSubject('${s.subject_id}')">تكملة</button>`}
     </div>
   `;
   }).join('');
 }
 
+function openSubject(id) {
+  alert('جاري فتح المادة رقم: ' + (id || '1'));
+}
+
 function renderDemoSubjects() {
   const demo = [
-    { icon:'📐', subject_name:'الرياضيات', lessons_done:0, lessons_total:3, percent:0, locked:false },
+    { icon:'📐', subject_name:'الرياضيات', lessons_done:1, lessons_total:3, percent:33, locked:false },
     { icon:'🧪', subject_name:'الكيمياء', lessons_done:0, lessons_total:3, percent:0, locked:false },
     { icon:'⚛️', subject_name:'الفيزياء المكثف', lessons_done:0, lessons_total:2, percent:0, locked:true },
   ];
@@ -413,12 +421,13 @@ async function redeemKey() {
 async function loadDashboard() {
   if (!token) {
     document.getElementById('authGuard').classList.add('show');
+    document.getElementById('authGuardText').textContent = 'سجل دخولك لتتمكن من حفظ تقدمك وتفعيل الاشتراكات.';
     document.getElementById('greeting').textContent = 'هلا فيك 👋';
     document.getElementById('sidebarName').textContent = 'زائر';
-    document.getElementById('sidebarGrade').textContent = 'سجل دخولك لتشوف صفك';
-    document.getElementById('overallPct').textContent = '—';
-    document.getElementById('lessonsDone').textContent = '—';
-    document.getElementById('lessonsTotal').textContent = '—';
+    document.getElementById('sidebarGrade').textContent = 'سجل الدخول';
+    document.getElementById('overallPct').textContent = '0٪';
+    document.getElementById('lessonsDone').textContent = '0';
+    document.getElementById('lessonsTotal').textContent = '8';
     renderDemoSubjects();
     return;
   }
@@ -429,7 +438,7 @@ async function loadDashboard() {
     
     document.getElementById('greeting').textContent = `هلا ${user.full_name ? user.full_name.split(' ')[0] : ''} 👋`;
     document.getElementById('sidebarName').textContent = user.full_name || 'طالب';
-    document.getElementById('sidebarGrade').textContent = user.grade || '—';
+    document.getElementById('sidebarGrade').textContent = user.grade || 'طالب مسار';
 
     const progressData = await apiGet('/content/progress');
     document.getElementById('overallPct').textContent = (progressData.overall_percent || 0) + '٪';
@@ -440,8 +449,7 @@ async function loadDashboard() {
     renderSubjects(progressData.subjects || []);
   } catch (err) {
     document.getElementById('authGuard').classList.add('show');
-    document.getElementById('authGuard').querySelector('span').textContent =
-      'ما كدرنا نجيب بياناتك (' + err.message + '). تأكد إن الباك اند شغّال.';
+    document.getElementById('authGuardText').textContent = 'تعذر الاتصال بالخادم (' + err.message + ') — تم تفعيل الوضع التجريبي.';
     renderDemoSubjects();
   }
 }
