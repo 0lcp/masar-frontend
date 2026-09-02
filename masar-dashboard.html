@@ -313,7 +313,7 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-const token = sessionStorage.getItem('masar_token');
+const token = localStorage.getItem('masar_token');
 
 const subjectIcons = { }; // backend already sends an icon emoji per subject
 
@@ -441,4 +441,4 @@ loadDashboard();
 </script>
 
 </body>
-</html>.
+</html>
