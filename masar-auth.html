@@ -1,402 +1,449 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مسار — تسجيل الدخول والتوثيق</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مسار - تسجيل الدخول وإنشاء حساب</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
 
-:root {
-  --ink: #1A1030;
-  --panel: #241B3D;
-  --panel-2: #2E2350;
-  --gold: #FF6F5E;
-  --gold-soft: #FF9587;
-  --teal-soft: #6EE7B7;
-  --text: #F7F3FF;
-  --muted: #A79FC7;
-  --line: rgba(247,243,255,0.09);
-  --danger: #F43F5E;
-}
+        body {
+            background-color: #1A1030;
+            color: #F7F3FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: var(--ink);
-  color: var(--text);
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
+        .auth-container {
+            background-color: #241B3D;
+            border: 1px solid rgba(247, 243, 255, 0.1);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
 
-.auth-card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
-  padding: 32px 28px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 24px;
-  font-family: 'El Messiri', serif;
-  font-weight: 700;
-  margin-bottom: 24px;
-}
-.logo-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 12px var(--gold);
-}
+        .auth-header h1 {
+            color: #FF6F5E;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
 
-.tabs {
-  display: flex;
-  background: var(--panel-2);
-  border-radius: 12px;
-  padding: 4px;
-  margin-bottom: 24px;
-}
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-.tab.active {
-  background: var(--panel);
-  color: var(--gold-soft);
-}
+        .auth-header p {
+            color: #A79FC7;
+            font-size: 14px;
+        }
 
-.form-group {
-  margin-bottom: 18px;
-}
-.form-group label {
-  display: block;
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.form-group input, .form-group select {
-  width: 100%;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px 14px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  font-family: inherit;
-}
-.form-group input:focus, .form-group select:focus {
-  border-color: var(--gold);
-}
+        .tab-buttons {
+            display: flex;
+            background-color: #2E2350;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
 
-.forgot-link {
-  display: block;
-  text-align: left;
-  font-size: 12px;
-  color: var(--gold-soft);
-  text-decoration: none;
-  margin-top: -10px;
-  margin-bottom: 18px;
-  cursor: pointer;
-}
-.forgot-link:hover { text-decoration: underline; }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: #A79FC7;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-.btn-submit {
-  width: 100%;
-  background: var(--gold);
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 15px;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: opacity 0.2s;
-}
-.btn-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+        .tab-btn.active {
+            background-color: #FF6F5E;
+            color: #1A1030;
+        }
 
-.alert {
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  margin-bottom: 18px;
-  display: none;
-  line-height: 1.5;
-}
-.alert.error { background: rgba(244, 63, 94, 0.15); color: #FB7185; border: 1px solid rgba(244, 63, 94, 0.3); display: block; }
-.alert.success { background: rgba(34, 176, 125, 0.15); color: var(--teal-soft); border: 1px solid rgba(34, 176, 125, 0.3); display: block; }
-.alert.info { background: rgba(255, 149, 135, 0.15); color: var(--gold-soft); border: 1px solid rgba(255, 149, 135, 0.3); display: block; }
-</style>
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #F7F3FF;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #3B2E63;
+            background-color: #1A1030;
+            color: #F7F3FF;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #FF6F5E;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #FF6F5E;
+            color: #1A1030;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #FF8575;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: left;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #FF9587;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .alert-box {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: rgba(255, 111, 94, 0.15);
+            border: 1px solid #FF6F5E;
+            color: #FF9587;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.15);
+            border: 1px solid #4CAF50;
+            color: #81C784;
+        }
+    </style>
 </head>
 <body>
 
-<div class="auth-card">
-  <div class="logo"><span class="logo-dot"></span>منصة مسار</div>
-  
-  <div class="tabs" id="authTabs">
-    <div class="tab active" onclick="switchMode('login')">تسجيل الدخول</div>
-    <div class="tab" onclick="switchMode('register')">حساب جديد</div>
-  </div>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>منصة مسار</h1>
+            <p>بوابتك للتعلم الذكي والنجاح</p>
+        </div>
 
-  <div id="alertBox" class="alert"></div>
+        <div id="alertBox" class="alert-box"></div>
 
-  <!-- نموذج الدخول والتسجيل -->
-  <form id="authForm" onsubmit="handleAuth(event)">
-    <div class="form-group" id="nameGroup" style="display:none;">
-      <label>الاسم الكامل</label>
-      <input type="text" id="fullName" placeholder="أدخل اسمك الثلاثي">
+        <!-- أزرار التنقل بين التسجيل والدخول -->
+        <div class="tab-buttons" id="tabButtons">
+            <button type="button" class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
+            <button type="button" class="tab-btn" onclick="switchTab('register')">حساب جديد</button>
+        </div>
+
+        <!-- 1. نموذج تسجيل الدخول -->
+        <form id="loginForm" class="form-step active">
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="loginEmail" required placeholder="example@mail.com">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••">
+                <a href="#" class="forgot-link" onclick="showForgotPassword(event)">نسيت كلمة المرور؟</a>
+            </div>
+            <button type="submit" class="submit-btn" id="loginBtn">دخول</button>
+        </form>
+
+        <!-- 2. نموذج إنشاء حساب جديد -->
+        <form id="registerForm" class="form-step">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="regFullName" required placeholder="أحمد علي">
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="regEmail" required placeholder="example@mail.com">
+            </div>
+            <div class="form-group">
+                <label>الصف الدراسي</label>
+                <select id="regGrade" required>
+                    <option value="" disabled selected>اختر الصف الدراسي</option>
+                    <option value="الرابع العلمي">الرابع العلمي</option>
+                    <option value="الرابع الأدبي">الرابع الأدبي</option>
+                    <option value="الخامس العلمي">الخامس العلمي</option>
+                    <option value="الخامس الأدبي">الخامس الأدبي</option>
+                    <option value="السادس العلمي">السادس العلمي</option>
+                    <option value="السادس الأدبي">السادس الأدبي</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور (8 أحرف أو أكثر)</label>
+                <input type="password" id="regPassword" required minlength="8" placeholder="••••••••">
+            </div>
+            <button type="submit" class="submit-btn" id="registerBtn">إنشاء الحساب</button>
+        </form>
+
+        <!-- 3. نموذج طلب رمز نسيت كلمة المرور -->
+        <form id="forgotForm" class="form-step">
+            <div class="form-group">
+                <label>أدخل بريدك الإلكتروني لتلقي رمز التوثيق (OTP)</label>
+                <input type="email" id="forgotEmail" required placeholder="example@mail.com">
+            </div>
+            <button type="submit" class="submit-btn" id="forgotBtn">إرسال الرمز</button>
+            <a href="#" class="forgot-link" style="text-align: center; margin-top: 15px;" onclick="switchTab('login')">العودة لتسجيل الدخول</a>
+        </form>
+
+        <!-- 4. نموذج إدخال رمز OTP وكلمة المرور الجديدة -->
+        <form id="resetForm" class="form-step">
+            <div class="form-group">
+                <label>رمز التوثيق (OTP)</label>
+                <input type="text" id="resetCode" maxlength="6" required placeholder="123456" style="text-align: center; letter-spacing: 4px; font-weight: bold; font-size: 18px;">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور الجديدة</label>
+                <input type="password" id="resetPassword" required minlength="8" placeholder="••••••••">
+            </div>
+            <button type="submit" class="submit-btn" id="resetBtn">تغيير كلمة المرور</button>
+        </form>
     </div>
 
-    <div class="form-group" id="gradeGroup" style="display:none;">
-      <label>الصف الدراسي</label>
-      <select id="grade">
-        <option value="الثالث متوسط">الثالث متوسط</option>
-        <option value="الرابع إعدادي">الرابع إعدادي</option>
-        <option value="الخامس إعدادي">الخامس إعدادي</option>
-        <option value="السادس إعدادي">السادس إعدادي</option>
-      </select>
-    </div>
+    <script>
+        const API_BASE = 'https://masar-backend.onrender.com/api/auth';
+        const DASHBOARD_PAGE = 'masar-dashboard.html';
 
-    <div class="form-group">
-      <label>البريد الإلكتروني</label>
-      <input type="email" id="email" required placeholder="example@domain.com">
-    </div>
+        function showAlert(message, type = 'error') {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.innerText = message;
+            alertBox.className = `alert-box alert-${type}`;
+            alertBox.style.display = 'block';
+        }
 
-    <div class="form-group" id="passGroup">
-      <label>كلمة المرور</label>
-      <input type="password" id="password" required placeholder="••••••••">
-    </div>
+        function hideAlert() {
+            document.getElementById('alertBox').style.display = 'none';
+        }
 
-    <a class="forgot-link" id="forgotLink" onclick="switchMode('forgot')">نسيت كلمة المرور؟</a>
+        function switchTab(tab) {
+            hideAlert();
+            document.getElementById('tabButtons').style.display = 'flex';
+            
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
 
-    <button type="submit" class="btn-submit" id="submitBtn">دخول</button>
-  </form>
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else if (tab === 'register') {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
 
-  <!-- نموذج استعادة كلمة المرور / التوثيق -->
-  <form id="resetForm" style="display:none;" onsubmit="handleReset(event)">
-    <div id="step1">
-      <div class="form-group">
-        <label>أدخل البريد الإلكتروني للحساب</label>
-        <input type="email" id="resetEmail" required placeholder="example@domain.com">
-      </div>
-      <button type="button" class="btn-submit" id="sendCodeBtn" onclick="sendCode()">إرسال رمز التوثيق</button>
-    </div>
+        function showForgotPassword(e) {
+            e.preventDefault();
+            hideAlert();
+            document.getElementById('tabButtons').style.display = 'none';
+            document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
+            document.getElementById('forgotForm').classList.add('active');
+        }
 
-    <div id="step2" style="display:none;">
-      <div class="form-group">
-        <label>رمز التوثيق (المكون من 6 أرقام)</label>
-        <input type="text" id="otpCode" placeholder="مثال: 123456">
-      </div>
-      <div class="form-group">
-        <label>كلمة المرور الجديدة</label>
-        <input type="password" id="newPassword" placeholder="••••••••">
-      </div>
-      <button type="submit" class="btn-submit" id="resetBtn">تغيير كلمة المرور</button>
-    </div>
+        // --- 1. معالجة إنشاء حساب جديد (مع التوجيه التلقائي) ---
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
 
-    <a class="forgot-link" style="text-align:center; margin-top:15px;" onclick="switchMode('login')">العودة لتسجيل الدخول</a>
-  </form>
-</div>
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري إنشاء الحساب...';
 
-<script>
-const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
-let mode = 'login';
+            const payload = {
+                full_name: document.getElementById('regFullName').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
+                grade: document.getElementById('regGrade').value,
+                password: document.getElementById('regPassword').value
+            };
 
-function switchMode(newMode) {
-  mode = newMode;
-  const authTabs = document.getElementById('authTabs');
-  const authForm = document.getElementById('authForm');
-  const resetForm = document.getElementById('resetForm');
-  const alertBox = document.getElementById('alertBox');
-  
-  alertBox.style.display = 'none';
+            try {
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
 
-  if (mode === 'forgot') {
-    authTabs.style.display = 'none';
-    authForm.style.display = 'none';
-    resetForm.style.display = 'block';
-    document.getElementById('step1').style.display = 'block';
-    document.getElementById('step2').style.display = 'none';
-  } else {
-    authTabs.style.display = 'flex';
-    authForm.style.display = 'block';
-    resetForm.style.display = 'none';
+                if (res.ok && data.success) {
+                    showAlert('تم إنشاء الحساب بنجاح! جاري توجيهك...', 'success');
+                    
+                    if (data.token) localStorage.setItem('masar_token', data.token);
+                    if (data.user) localStorage.setItem('masar_user', JSON.stringify(data.user));
 
-    const tabs = document.querySelectorAll('.tab');
-    const nameGroup = document.getElementById('nameGroup');
-    const gradeGroup = document.getElementById('gradeGroup');
-    const forgotLink = document.getElementById('forgotLink');
-    const submitBtn = document.getElementById('submitBtn');
+                    setTimeout(() => {
+                        window.location.href = DASHBOARD_PAGE;
+                    }, 1200);
+                } else {
+                    showAlert(data.error || 'فشل إنشاء الحساب');
+                }
+            } catch (err) {
+                showAlert('تعذر الاتصال بالسيرفر، يرجى إعادة المحاولة.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'إنشاء الحساب';
+            }
+        });
 
-    if (mode === 'login') {
-      tabs[0].classList.add('active');
-      tabs[1].classList.remove('active');
-      nameGroup.style.display = 'none';
-      gradeGroup.style.display = 'none';
-      forgotLink.style.display = 'block';
-      submitBtn.textContent = 'دخول';
-    } else {
-      tabs[1].classList.add('active');
-      tabs[0].classList.remove('active');
-      nameGroup.style.display = 'block';
-      gradeGroup.style.display = 'block';
-      forgotLink.style.display = 'none';
-      submitBtn.textContent = 'إنشاء الحساب';
-    }
-  }
-}
+        // --- 2. معالجة تسجيل الدخول ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
 
-// طلب إرسال رمز التوثيق إلى البريد
-async function sendCode() {
-  const email = document.getElementById('resetEmail').value.trim();
-  const alertBox = document.getElementById('alertBox');
-  const sendCodeBtn = document.getElementById('sendCodeBtn');
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري تسجيل الدخول...';
 
-  if (!email) {
-    alertBox.textContent = 'يرجى إدخال البريد الإلكتروني أولاً';
-    alertBox.className = 'alert error';
-    return;
-  }
+            const payload = {
+                email: document.getElementById('loginEmail').value.trim(),
+                password: document.getElementById('loginPassword').value
+            };
 
-  alertBox.textContent = 'جاري إرسال رمز التوثيق إلى بريدك الإلكتروني...';
-  alertBox.className = 'alert info';
-  sendCodeBtn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
 
-  try {
-    const res = await fetch(`${API_BASE}/forgot-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-    const data = await res.json();
+                if (res.ok && data.success) {
+                    const token = data.token || data.access_token;
+                    if (token) localStorage.setItem('masar_token', token);
+                    if (data.user) localStorage.setItem('masar_user', JSON.stringify(data.user));
 
-    if (!res.ok || !data.success) throw new Error(data.error || 'فشل إرسال الرمز');
+                    window.location.href = DASHBOARD_PAGE;
+                } else {
+                    showAlert(data.error || 'البريد أو كلمة المرور غير صحيحة');
+                }
+            } catch (err) {
+                showAlert('تعذر الاتصال بالسيرفر، يرجى التأكد من النت.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'دخول';
+            }
+        });
 
-    alertBox.textContent = 'تم إرسال رمز التوثيق! تحقق من صندوق الوارد في بريدك الإلكتروني.';
-    alertBox.className = 'alert success';
-    
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('step2').style.display = 'block';
+        // --- 3. إرسال رمز OTP نسيت كلمة المرور ---
+        document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
 
-  } catch (err) {
-    alertBox.textContent = err.message;
-    alertBox.className = 'alert error';
-  } finally {
-    sendCodeBtn.disabled = false;
-  }
-}
+            const btn = document.getElementById('forgotBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري الإرسال...';
 
-// تأكيد تغيير كلمة المرور باستخدام الرمز
-async function handleReset(e) {
-  e.preventDefault();
-  const email = document.getElementById('resetEmail').value.trim();
-  const code = document.getElementById('otpCode').value.trim();
-  const newPassword = document.getElementById('newPassword').value;
-  const alertBox = document.getElementById('alertBox');
-  const resetBtn = document.getElementById('resetBtn');
+            const email = document.getElementById('forgotEmail').value.trim();
 
-  alertBox.textContent = 'جاري التحقق من الرمز وتغيير كلمة المرور...';
-  alertBox.className = 'alert info';
-  resetBtn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
 
-  try {
-    const res = await fetch(`${API_BASE}/reset-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code, newPassword })
-    });
-    const data = await res.json();
+                if (res.ok && data.success) {
+                    showAlert('تم إرسال رمز التوثيق إلى إيميلك، أدخله أدناه.', 'success');
+                    window.tempResetEmail = email;
+                    document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
+                    document.getElementById('resetForm').classList.add('active');
+                } else {
+                    showAlert(data.error || 'تعذر إرسال الرمز، أعد المحاولة.');
+                }
+            } catch (err) {
+                showAlert('خطأ بالاتصال بالسيرفر.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'إرسال الرمز';
+            }
+        });
 
-    if (!res.ok || !data.success) throw new Error(data.error || 'رمز التوثيق غير صحيح أو انتهت صلاحيته');
+        // --- 4. إعادة تعيين كلمة المرور بواسطة OTP ---
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
 
-    alertBox.textContent = 'تم تغيير كلمة المرور بنجاح! جاري تحويلك لتسجيل الدخول...';
-    alertBox.className = 'alert success';
+            const btn = document.getElementById('resetBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري التحديث...';
 
-    setTimeout(() => switchMode('login'), 2000);
+            const payload = {
+                email: window.tempResetEmail || document.getElementById('forgotEmail').value.trim(),
+                code: document.getElementById('resetCode').value.trim(),
+                newPassword: document.getElementById('resetPassword').value
+            };
 
-  } catch (err) {
-    alertBox.textContent = err.message;
-    alertBox.className = 'alert error';
-  } finally {
-    resetBtn.disabled = false;
-  }
-}
+            try {
+                const res = await fetch(`${API_BASE}/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
 
-// معالجة دخول وتسجيل الحساب
-async function handleAuth(e) {
-  e.preventDefault();
-  const alertBox = document.getElementById('alertBox');
-  const submitBtn = document.getElementById('submitBtn');
-  
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const fullName = document.getElementById('fullName').value.trim();
-  const grade = document.getElementById('grade').value;
-
-  alertBox.textContent = 'جاري الاتصال بالسيرفر...';
-  alertBox.className = 'alert info';
-  submitBtn.disabled = true;
-
-  const endpoint = mode === 'login' ? `${API_BASE}/login` : `${API_BASE}/register`;
-  const payload = mode === 'login' 
-    ? { email, password }
-    : { email, password, full_name: fullName, grade };
-
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || 'بيانات الدخول غير صحيحة');
-    }
-
-    localStorage.setItem('masar_token', data.token);
-    if (data.user) {
-      localStorage.setItem('masar_user', JSON.stringify(data.user));
-    }
-
-    alertBox.textContent = mode === 'login' ? 'تم تسجيل الدخول بنجاح!' : 'تم إنشاء الحساب بنجاح!';
-    alertBox.className = 'alert success';
-
-    setTimeout(() => {
-      window.location.href = 'masar-dashboard.html';
-    }, 800);
-
-  } catch (err) {
-    alertBox.textContent = err.message;
-    alertBox.className = 'alert error';
-  } finally {
-    submitBtn.disabled = false;
-  }
-}
-</script>
-
+                if (res.ok && data.success) {
+                    showAlert('تم تغيير كلمة المرور بنجاح! يمكنك الدخول الآن.', 'success');
+                    setTimeout(() => switchTab('login'), 2000);
+                } else {
+                    showAlert(data.error || 'رمز التوثيق غير صحيح.');
+                }
+            } catch (err) {
+                showAlert('تعذر الاتصال بالسيرفر.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تغيير كلمة المرور';
+            }
+        });
+    </script>
 </body>
 </html>
