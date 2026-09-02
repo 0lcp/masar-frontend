@@ -13,406 +13,264 @@
   --panel-2: #2E2350;
   --gold: #FF6F5E;
   --gold-soft: #FF9587;
-  --teal: #22B07D;
   --teal-soft: #6EE7B7;
   --text: #F7F3FF;
   --muted: #A79FC7;
-  --line: rgba(247,243,255,0.10);
+  --line: rgba(247,243,255,0.09);
   --danger: #F43F5E;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-
 body {
   background: var(--ink);
   color: var(--text);
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   min-height: 100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding: 24px;
-  position: relative;
-  overflow-x:hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.display { font-family:'El Messiri', serif; font-weight:700; }
-
-.bg-glow {
-  position:fixed; top:-160px; right:-100px;
-  width: 560px; height:560px; border-radius:50%;
-  background: radial-gradient(circle, rgba(255,111,94,0.14) 0%, rgba(255,111,94,0) 65%);
-  pointer-events:none;
-}
-.bg-glow2 {
-  position:fixed; bottom:-180px; left:-140px;
-  width: 520px; height:520px; border-radius:50%;
-  background: radial-gradient(circle, rgba(34,176,125,0.14) 0%, rgba(34,176,125,0) 65%);
-  pointer-events:none;
-}
-
-.card {
-  position:relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 420px;
+.auth-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 40px 32px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
-.logo { display:flex; align-items:center; gap:10px; font-size:22px; margin-bottom: 8px; }
-.logo-dot { width:10px; height:10px; border-radius:50%; background: var(--gold); box-shadow: 0 0 14px var(--gold); }
-
-.rail {
-  display:flex; align-items:center; gap:8px; margin: 22px 0 28px;
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 24px;
+  font-family: 'El Messiri', serif;
+  font-weight: 700;
+  margin-bottom: 24px;
 }
-.rail-dot {
-  width:8px; height:8px; border-radius:50%; background: var(--line);
+.logo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
 }
-.rail-dot.active { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-.rail-line { flex:1; height:1px; background: var(--line); }
-
-h1 { font-size: 24px; margin-bottom: 6px; }
-.subtitle { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
 
 .tabs {
-  display:flex; background: var(--panel-2); border-radius: 999px; padding: 4px; margin-bottom: 28px;
+  display: flex;
+  background: var(--panel-2);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
 }
 .tab {
-  flex:1; text-align:center; padding: 10px; border-radius: 999px; font-size: 14px; font-weight:600;
-  cursor:pointer; color: var(--muted); transition: all .2s; user-select:none;
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
 }
-.tab.active { background: var(--gold); color: var(--ink); }
-
-form { display:flex; flex-direction:column; gap: 16px; }
-.field { display:flex; flex-direction:column; gap: 6px; }
-.field label { font-size: 13px; color: var(--muted); }
-.field input, .field select {
-  background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px;
-  padding: 13px 14px; color: var(--text); font-size: 15px; font-family:inherit;
-  outline: none; transition: border-color .2s;
+.tab.active {
+  background: var(--panel);
+  color: var(--gold-soft);
 }
-.field input:focus, .field select:focus { border-color: var(--gold); }
-.field input::placeholder { color: #6B6392; }
 
-.field-error { font-size: 12px; color: var(--danger); display:none; }
-.field.has-error input { border-color: var(--danger); }
-.field.has-error .field-error { display:block; }
-
-.row-between { display:flex; align-items:center; justify-content:space-between; font-size: 13px; }
-.checkbox-row { display:flex; align-items:center; gap:8px; color: var(--muted); }
-.checkbox-row input { accent-color: var(--gold); }
-.link { color: var(--gold-soft); text-decoration:none; }
-.link:hover { text-decoration:underline; }
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--gold);
+}
 
 .btn-submit {
-  background: var(--gold); color: var(--ink); font-weight:700; font-size:15px;
-  padding: 15px; border-radius: 12px; border:none; cursor:pointer; margin-top: 6px;
-  transition: transform .15s, box-shadow .15s;
+  width: 100%;
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s;
 }
-.btn-submit:hover { box-shadow: 0 10px 24px rgba(255,111,94,0.25); transform: translateY(-1px); }
-
-.divider { display:flex; align-items:center; gap:12px; margin: 24px 0; color: var(--muted); font-size:13px; }
-.divider::before, .divider::after { content:""; flex:1; height:1px; background: var(--line); }
-
-.switch-line { text-align:center; font-size: 14px; color: var(--muted); }
-
-.panel { display:none; }
-.panel.active { display:flex; flex-direction:column; gap:16px; }
-
-.form-msg {
-  display:none; font-size: 13px; border-radius: 10px; padding: 10px 14px; line-height:1.5;
+.btn-submit:hover {
+  opacity: 0.9;
 }
-.form-msg.show { display:block; }
-.form-msg.error { background: rgba(244,63,94,0.12); color: #FB7185; border: 1px solid rgba(244,63,94,0.3); }
-.form-msg.success { background: rgba(34,176,125,0.14); color: var(--teal-soft); border: 1px solid rgba(34,176,125,0.35); }
 
-.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform:none; box-shadow:none; }
+.alert {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  display: none;
+}
+.alert.error {
+  background: rgba(244, 63, 94, 0.15);
+  color: #FB7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  display: block;
+}
+.alert.success {
+  background: rgba(34, 176, 125, 0.15);
+  color: var(--teal-soft);
+  border: 1px solid rgba(34, 176, 125, 0.3);
+  display: block;
+}
 </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-<div class="bg-glow2"></div>
-
-<div class="card">
-  <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
-
-  <div class="rail">
-    <div class="rail-dot active" id="dot1"></div>
-    <div class="rail-line"></div>
-    <div class="rail-dot" id="dot2"></div>
-  </div>
-
+<div class="auth-card">
+  <div class="logo"><span class="logo-dot"></span>منصة مسار</div>
+  
   <div class="tabs">
-    <div class="tab active" id="tabLogin" onclick="showPanel('login')">تسجيل الدخول</div>
-    <div class="tab" id="tabSignup" onclick="showPanel('signup')">حساب جديد</div>
+    <div class="tab active" onclick="switchMode('login')">تسجيل الدخول</div>
+    <div class="tab" onclick="switchMode('register')">حساب جديد</div>
   </div>
 
-  <!-- LOGIN -->
-  <div class="panel active" id="loginPanel">
-    <div>
-      <h1>هلا بيك من جديد</h1>
-      <p class="subtitle">سجل دخولك وكمل مسارك من وين وكفت</p>
+  <div id="alertBox" class="alert"></div>
+
+  <form id="authForm" onsubmit="handleAuth(event)">
+    <div class="form-group" id="nameGroup" style="display:none;">
+      <label>الاسم الكامل</label>
+      <input type="text" id="fullName" placeholder="أدخل اسمك الثلاثي">
     </div>
-    <form onsubmit="return handleSubmit(event, 'login')">
-      <div class="field" id="loginEmailField">
-        <label for="loginEmail">البريد الإلكتروني أو رقم الهاتف</label>
-        <input type="text" id="loginEmail" placeholder="مثال: ahmed@email.com">
-        <span class="field-error">دخّل بريد إلكتروني أو رقم هاتف صحيح</span>
-      </div>
-      <div class="field" id="loginPassField">
-        <label for="loginPass">كلمة المرور</label>
-        <input type="password" id="loginPass" placeholder="••••••••">
-        <span class="field-error">كلمة المرور لازم تكون 8 أحرف أو أكثر</span>
-      </div>
-      <div class="row-between">
-        <label class="checkbox-row"><input type="checkbox"> خليني داخل</label>
-        <a href="#" class="link" onclick="toggleForgotBox();return false;">نسيت كلمة المرور؟</a>
-      </div>
-      <div class="form-msg" id="loginMsg"></div>
-      <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
-    </form>
 
-    <div id="forgotBox" style="display:none; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رابط استعادة كلمة المرور:</p>
-      <form onsubmit="return submitForgotPassword(event)">
-        <div class="field">
-          <input type="email" id="forgotEmail" placeholder="بريدك الإلكتروني" required>
-        </div>
-        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رابط الاستعادة</button>
-        <div class="form-msg" id="forgotMsg"></div>
-      </form>
+    <div class="form-group" id="gradeGroup" style="display:none;">
+      <label>الصف الدراسي</label>
+      <select id="grade">
+        <option value="الثالث متوسط">الثالث متوسط</option>
+        <option value="الرابع إعدادي">الرابع إعدادي</option>
+        <option value="الخامس إعدادي">الخامس إعدادي</option>
+        <option value="السادس إعدادي">السادس إعدادي</option>
+      </select>
     </div>
-  </div>
 
-  <!-- SIGNUP -->
-  <div class="panel" id="signupPanel">
-    <div>
-      <h1>ابدا مسارك</h1>
-      <p class="subtitle">دقيقتين وتصير جاهز تبدا أول درس</p>
+    <div class="form-group">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="email" required placeholder="example@domain.com">
     </div>
-    <form onsubmit="return handleSubmit(event, 'signup')">
-      <div class="field" id="nameField">
-        <label for="fullName">الاسم الكامل</label>
-        <input type="text" id="fullName" placeholder="اسمك الثلاثي">
-        <span class="field-error">اكتب اسمك كامل</span>
-      </div>
-      <div class="field" id="signupEmailField">
-        <label for="signupEmail">البريد الإلكتروني</label>
-        <input type="email" id="signupEmail" placeholder="مثال: example@email.com">
-        <span class="field-error">دخّل بريد إلكتروني صحيح</span>
-      </div>
-      <div class="field" id="gradeField">
-        <label for="grade">الصف الدراسي</label>
-        <select id="grade">
-          <option value="">اختر صفك</option>
-          <option>السادس ابتدائي</option>
-          <option>الأول متوسط</option>
-          <option>الثاني متوسط</option>
-          <option>الثالث متوسط</option>
-          <option>الرابع إعدادي</option>
-          <option>الخامس إعدادي</option>
-          <option>السادس إعدادي</option>
-        </select>
-        <span class="field-error">اختر صفك الدراسي</span>
-      </div>
-      <div class="field" id="signupPassField">
-        <label for="signupPass">كلمة المرور</label>
-        <input type="password" id="signupPass" placeholder="8 أحرف على الأقل">
-        <span class="field-error">كلمة المرور لازم تكون 8 أحرف أو أكثر</span>
-      </div>
-      <label class="checkbox-row" style="font-size:13px;">
-        <input type="checkbox" id="terms">
-        موافق على <a href="#" class="link">الشروط</a> و<a href="#" class="link">سياسة الخصوصية</a>
-      </label>
-      <div class="form-msg" id="signupMsg"></div>
-      <button type="submit" class="btn-submit" id="signupBtn">إنشاء الحساب</button>
-    </form>
-  </div>
 
-  <div class="switch-line" id="switchLine">
-    ماعندك حساب؟ <a href="#" class="link" onclick="showPanel('signup');return false;">سجل هسه</a>
-  </div>
+    <div class="form-group">
+      <label>كلمة المرور</label>
+      <input type="password" id="password" required placeholder="••••••••">
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">دخول</button>
+  </form>
 </div>
 
 <script>
-function toggleForgotBox() {
-  const box = document.getElementById('forgotBox');
-  box.style.display = box.style.display === 'none' ? 'block' : 'none';
-}
-
-async function submitForgotPassword(e) {
-  e.preventDefault();
-  const email = document.getElementById('forgotEmail').value.trim();
-  const msgEl = document.getElementById('forgotMsg');
-  const btn = document.getElementById('forgotBtn');
-
-  btn.disabled = true; btn.textContent = '...جاري الإرسال';
-
-  try {
-    const res = await fetch(`${API_BASE}/forgot-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-
-    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رابط الاستعادة';
-    msgEl.className = 'form-msg show success';
-  } catch (err) {
-    msgEl.textContent = 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال.';
-    msgEl.className = 'form-msg show error';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'إرسال رابط الاستعادة';
-  }
-  return false;
-}
-
-function showPanel(which) {
-  const isLogin = which === 'login';
-  document.getElementById('loginPanel').classList.toggle('active', isLogin);
-  document.getElementById('signupPanel').classList.toggle('active', !isLogin);
-  document.getElementById('tabLogin').classList.toggle('active', isLogin);
-  document.getElementById('tabSignup').classList.toggle('active', !isLogin);
-  document.getElementById('dot1').classList.toggle('active', isLogin);
-  document.getElementById('dot2').classList.toggle('active', !isLogin);
-  document.getElementById('switchLine').innerHTML = isLogin
-    ? 'ماعندك حساب؟ <a href="#" class="link" onclick="showPanel(\'signup\');return false;">سجل هسه</a>'
-    : 'عندك حساب من قبل؟ <a href="#" class="link" onclick="showPanel(\'login\');return false;">دخول</a>';
-}
-
-function setError(fieldId, hasError) {
-  const field = document.getElementById(fieldId);
-  field.classList.toggle('has-error', hasError);
-}
-
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
+let mode = 'login';
 
-function showMsg(id, text, type) {
-  const el = document.getElementById(id);
-  el.textContent = text;
-  el.className = 'form-msg show ' + type;
-}
+function switchMode(newMode) {
+  mode = newMode;
+  const tabs = document.querySelectorAll('.tab');
+  const nameGroup = document.getElementById('nameGroup');
+  const gradeGroup = document.getElementById('gradeGroup');
+  const submitBtn = document.getElementById('submitBtn');
+  const alertBox = document.getElementById('alertBox');
+  
+  alertBox.className = 'alert';
+  alertBox.style.display = 'none';
 
-function clearMsg(id) {
-  const el = document.getElementById(id);
-  el.className = 'form-msg';
-}
-
-function setLoading(btnId, loading, idleText) {
-  const btn = document.getElementById(btnId);
-  btn.disabled = loading;
-  btn.textContent = loading ? '...جاري التحقق' : idleText;
-}
-
-async function handleSubmit(e, type) {
-  e.preventDefault();
-
-  if (type === 'login') {
-    return submitLogin();
+  if (mode === 'login') {
+    tabs[0].classList.add('active');
+    tabs[1].classList.remove('active');
+    nameGroup.style.display = 'none';
+    gradeGroup.style.display = 'none';
+    submitBtn.textContent = 'دخول';
   } else {
-    return submitSignup();
+    tabs[1].classList.add('active');
+    tabs[0].classList.remove('active');
+    nameGroup.style.display = 'block';
+    gradeGroup.style.display = 'block';
+    submitBtn.textContent = 'إنشاء الحساب';
   }
 }
 
-async function submitLogin() {
-  clearMsg('loginMsg');
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass = document.getElementById('loginPass').value;
-
-  const emailOk = email.length > 3;
-  const passOk = pass.length >= 8;
-  setError('loginEmailField', !emailOk);
-  setError('loginPassField', !passOk);
-  if (!emailOk || !passOk) return false;
-
-  setLoading('loginBtn', true);
-  try {
-    const res = await fetch(`${API_BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass }),
-    });
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
-      return false;
-    }
-
-    // 1. تخزين التوكن وبيانات المستخدم في ذاكرة المتصفح
-    localStorage.setItem('masar_token', data.access_token);
-    localStorage.setItem('masar_user', JSON.stringify(data.user));
-
-    showMsg('loginMsg', `هلا ${data.user.full_name || ''} 👋 تم تسجيل الدخول بنجاح! جاري تحويلك...`, 'success');
-
-    // 2. التحويل التلقائي لصفحة الداشبورد الرئيسية للمستخدم
-    setTimeout(() => {
-      window.location.href = 'masar-dashboard.html'; // مسار صفحة الداشبورد
-    }, 1200);
-
-  } catch (err) {
-    showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
-  } finally {
-    setLoading('loginBtn', false, 'دخول');
-  }
-  return false;
-}
-
-async function submitSignup() {
-  clearMsg('signupMsg');
-  const full_name = document.getElementById('fullName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
+async function handleAuth(e) {
+  e.preventDefault();
+  const alertBox = document.getElementById('alertBox');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const fullName = document.getElementById('fullName').value.trim();
   const grade = document.getElementById('grade').value;
-  const password = document.getElementById('signupPass').value;
-  const termsOk = document.getElementById('terms').checked;
 
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const nameOk = full_name.length >= 3;
-  const gradeOk = grade !== '';
-  const passOk = password.length >= 8;
-  setError('nameField', !nameOk);
-  setError('signupEmailField', !emailOk);
-  setError('gradeField', !gradeOk);
-  setError('signupPassField', !passOk);
-  if (!nameOk || !emailOk || !gradeOk || !passOk) return false;
-  if (!termsOk) {
-    showMsg('signupMsg', 'لازم توافق على الشروط وسياسة الخصوصية', 'error');
-    return false;
-  }
+  alertBox.className = 'alert';
+  alertBox.style.display = 'none';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'جاري التحميل...';
 
-  setLoading('signupBtn', true);
+  const endpoint = mode === 'login' ? `${API_BASE}/login` : `${API_BASE}/register`;
+  const payload = mode === 'login' 
+    ? { email, password }
+    : { email, password, full_name: fullName, grade };
+
   try {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name, email, password, grade }),
+      body: JSON.stringify(payload)
     });
+
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      showMsg('signupMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
-      return false;
+      throw new Error(data.error || 'حدث خطأ أثناء الاتصال بالخادم');
     }
 
-    showMsg('signupMsg', data.message || 'تم إنشاء الحساب بنجاح! جاري التوهيج لدخول الحساب...', 'success');
+    // حفظ التوكن والبيانات في localStorage
+    localStorage.setItem('masar_token', data.token);
+    if (data.user) {
+      localStorage.setItem('masar_user', JSON.stringify(data.user));
+    }
 
-    // التحويل التلقائي لتبويب "تسجيل الدخول" بعد إنشاء الحساب بنجاح
+    alertBox.textContent = mode === 'login' ? 'تم تسجيل الدخول بنجاح! جاري التحويل...' : 'تم إنشاء الحساب بنجاح! جاري التحويل...';
+    alertBox.className = 'alert success';
+
+    // التحويل إلى صفحة الداش بورد
     setTimeout(() => {
-      showPanel('login');
-      document.getElementById('loginEmail').value = email;
-    }, 2000);
+      window.location.href = 'masar-dashboard.html';
+    }, 1000);
 
   } catch (err) {
-    showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
+    alertBox.textContent = err.message;
+    alertBox.className = 'alert error';
   } finally {
-    setLoading('signupBtn', false, 'إنشاء الحساب');
+    submitBtn.disabled = false;
+    submitBtn.textContent = mode === 'login' ? 'دخول' : 'إنشاء الحساب';
   }
-  return false;
 }
 </script>
 
