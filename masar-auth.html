@@ -262,7 +262,6 @@
     </div>
 
     <script>
-        // تحديث الرابط ليكون مطابقاً لسيرفرك المباشر في Render
         const API_BASE = 'https://masar-backend-gcpq.onrender.com/api/auth';
         const DASHBOARD_PAGE = 'masar-dashboard.html';
 
@@ -324,7 +323,10 @@
             try {
                 const res = await fetch(`${API_BASE}/send-register-otp`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ email: regTempData.email })
                 });
 
@@ -338,7 +340,7 @@
                     showAlert(data.error || 'حدث خطأ أثناء إرسال الرمز');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch error: ", err);
                 showAlert('تعذر الاتصال بالسيرفر، تأكد من الاتصال بالإنترنت.');
             } finally {
                 btn.disabled = false;
@@ -363,7 +365,10 @@
             try {
                 const res = await fetch(`${API_BASE}/register`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -383,7 +388,7 @@
                     showAlert(data.error || 'رمز التوثيق غير صحيح');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch error: ", err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -408,7 +413,10 @@
             try {
                 const res = await fetch(`${API_BASE}/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
@@ -423,7 +431,7 @@
                     showAlert(data.error || 'البريد أو كلمة المرور غير صحيحة');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch error: ", err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -445,7 +453,10 @@
             try {
                 const res = await fetch(`${API_BASE}/forgot-password`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ email })
                 });
                 const data = await res.json();
@@ -459,7 +470,7 @@
                     showAlert(data.error || 'تعذر إرسال الرمز، أعد المحاولة.');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch error: ", err);
                 showAlert('خطأ بالاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -485,7 +496,10 @@
             try {
                 const res = await fetch(`${API_BASE}/reset-password`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
@@ -497,7 +511,7 @@
                     showAlert(data.error || 'رمز التوثيق غير صحيح.');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch error: ", err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
