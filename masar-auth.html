@@ -91,6 +91,11 @@
             background-color: #e04343;
         }
 
+        .btn-submit:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
         .alert-box {
             padding: 12px;
             border-radius: 8px;
@@ -120,21 +125,20 @@
 
     <div id="alertBox" class="alert-box"></div>
 
-    <form id="registerForm">
+    <form id="registerForm" onsubmit="return false;">
         <div class="form-group">
             <label for="regEmail">البريد الإلكتروني</label>
             <input type="email" id="regEmail" placeholder="example@domain.com" required>
         </div>
 
-        <button type="submit" id="btnSendOtp" class="btn-submit">إرسال رمز التحقق</button>
+        <button type="button" id="btnSendOtp" class="btn-submit">إرسال رمز التحقق</button>
     </form>
 </div>
 
 <script>
     const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
-    const registerForm = document.getElementById('registerForm');
-    const alertBox = document.getElementById('alertBox');
     const btnSendOtp = document.getElementById('btnSendOtp');
+    const alertBox = document.getElementById('alertBox');
 
     function showAlert(message, isError = true) {
         alertBox.textContent = message;
@@ -142,10 +146,7 @@
         alertBox.style.display = 'block';
     }
 
-    registerForm.addEventListener('submit', async function (e) {
-        // منع إعادة تحميل الصفحة الافتراضية
-        e.preventDefault();
-
+    btnSendOtp.addEventListener('click', async function () {
         const emailInput = document.getElementById('regEmail');
         const email = emailInput.value.trim();
 
