@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة مسار - تسجيل الدخول وإنشاء حساب</title>
+    <!-- أداة فحص الشبكة والأخطاء مخصصة للتابلت والهاتف -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
     <style>
         * {
             box-sizing: border-box;
@@ -259,7 +262,8 @@
     </div>
 
     <script>
-        const API_BASE = 'https://masar-backend.onrender.com/api/auth';
+        // تحديث الرابط ليكون مطابقاً لسيرفرك المباشر في Render
+        const API_BASE = 'https://masar-backend-gcpq.onrender.com/api/auth';
         const DASHBOARD_PAGE = 'masar-dashboard.html';
 
         let regTempData = {};
@@ -334,7 +338,8 @@
                     showAlert(data.error || 'حدث خطأ أثناء إرسال الرمز');
                 }
             } catch (err) {
-                showAlert('تعذر الاتصال بالسيرفر.');
+                console.error(err);
+                showAlert('تعذر الاتصال بالسيرفر، تأكد من الاتصال بالإنترنت.');
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'إرسال رمز التوثيق';
@@ -378,6 +383,7 @@
                     showAlert(data.error || 'رمز التوثيق غير صحيح');
                 }
             } catch (err) {
+                console.error(err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -417,6 +423,7 @@
                     showAlert(data.error || 'البريد أو كلمة المرور غير صحيحة');
                 }
             } catch (err) {
+                console.error(err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -452,6 +459,7 @@
                     showAlert(data.error || 'تعذر إرسال الرمز، أعد المحاولة.');
                 }
             } catch (err) {
+                console.error(err);
                 showAlert('خطأ بالاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
@@ -489,6 +497,7 @@
                     showAlert(data.error || 'رمز التوثيق غير صحيح.');
                 }
             } catch (err) {
+                console.error(err);
                 showAlert('تعذر الاتصال بالسيرفر.');
             } finally {
                 btn.disabled = false;
