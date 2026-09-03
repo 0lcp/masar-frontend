@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة مسار - تسجيل الدخول وإنشاء حساب</title>
-    <!-- أداة فحص الشبكة والأخطاء مخصصة للتابلت والهاتف -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
     <style>
@@ -12,12 +11,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #1A1030;
-            color: #F7F3FF;
+            background-color: #0d0914;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,499 +24,166 @@
             padding: 20px;
         }
 
-        .auth-container {
-            background-color: #241B3D;
-            border: 1px solid rgba(247, 243, 255, 0.1);
+        .auth-card {
+            background-color: #1a1528;
             border-radius: 16px;
+            padding: 32px;
             width: 100%;
             max-width: 420px;
-            padding: 32px 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .auth-header {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             text-align: center;
-            margin-bottom: 24px;
         }
 
-        .auth-header h1 {
-            color: #FF6F5E;
+        .auth-card h1 {
+            color: #ff5252;
             font-size: 28px;
             margin-bottom: 8px;
         }
 
-        .auth-header p {
-            color: #A79FC7;
+        .auth-card p.subtitle {
+            color: #a0a0b0;
             font-size: 14px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            background-color: #2E2350;
-            border-radius: 10px;
-            padding: 4px;
             margin-bottom: 24px;
         }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: none;
-            color: #A79FC7;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background-color: #FF6F5E;
-            color: #1A1030;
-        }
-
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            text-align: right;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 14px;
-            color: #F7F3FF;
+            color: #ccc;
         }
 
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px;
             border-radius: 8px;
-            border: 1px solid #3B2E63;
-            background-color: #1A1030;
-            color: #F7F3FF;
-            font-size: 14px;
+            border: 1px solid #332a48;
+            background-color: #0d0914;
+            color: #fff;
+            font-size: 15px;
             outline: none;
-            transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            border-color: #FF6F5E;
+        .form-group input:focus {
+            border-color: #ff5252;
         }
 
-        .submit-btn {
+        .btn-submit {
             width: 100%;
-            padding: 14px;
-            background-color: #FF6F5E;
-            color: #1A1030;
+            padding: 12px;
             border: none;
             border-radius: 8px;
+            background-color: #ff5252;
+            color: #fff;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background 0.2s;
             margin-top: 10px;
         }
 
-        .submit-btn:hover {
-            background-color: #FF8575;
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .forgot-link {
-            display: block;
-            text-align: left;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #FF9587;
-            text-decoration: none;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        .form-step {
-            display: none;
-        }
-
-        .form-step.active {
-            display: block;
+        .btn-submit:hover {
+            background-color: #e04343;
         }
 
         .alert-box {
             padding: 12px;
             border-radius: 8px;
-            font-size: 14px;
             margin-bottom: 16px;
+            font-size: 14px;
             display: none;
         }
 
         .alert-error {
-            background-color: rgba(255, 111, 94, 0.15);
-            border: 1px solid #FF6F5E;
-            color: #FF9587;
+            background-color: rgba(255, 82, 82, 0.15);
+            border: 1px solid #ff5252;
+            color: #ff8888;
         }
 
         .alert-success {
             background-color: rgba(76, 175, 80, 0.15);
-            border: 1px solid #4CAF50;
-            color: #81C784;
+            border: 1px solid #4caf50;
+            color: #81c784;
         }
     </style>
 </head>
 <body>
 
-    <div class="auth-container">
-        <div class="auth-header">
-            <h1>منصة مسار</h1>
-            <p>بوابتك للتعلم الذكي والنجاح</p>
+<div class="auth-card">
+    <h1>منصة مسار</h1>
+    <p class="subtitle">بوابتك للتعلم الذكي والنجاح</p>
+
+    <div id="alertBox" class="alert-box"></div>
+
+    <form id="registerForm">
+        <div class="form-group">
+            <label for="regEmail">البريد الإلكتروني</label>
+            <input type="email" id="regEmail" placeholder="example@domain.com" required>
         </div>
 
-        <div id="alertBox" class="alert-box"></div>
+        <button type="submit" id="btnSendOtp" class="btn-submit">إرسال رمز التحقق</button>
+    </form>
+</div>
 
-        <!-- أزرار التنقل بين التسجيل والدخول -->
-        <div class="tab-buttons" id="tabButtons">
-            <button type="button" class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
-            <button type="button" class="tab-btn" onclick="switchTab('register')">حساب جديد</button>
-        </div>
+<script>
+    const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
+    const registerForm = document.getElementById('registerForm');
+    const alertBox = document.getElementById('alertBox');
+    const btnSendOtp = document.getElementById('btnSendOtp');
 
-        <!-- 1. نموذج تسجيل الدخول -->
-        <form id="loginForm" class="form-step active">
-            <div class="form-group">
-                <label>البريد الإلكتروني</label>
-                <input type="email" id="loginEmail" required placeholder="example@mail.com">
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور</label>
-                <input type="password" id="loginPassword" required placeholder="••••••••">
-                <a href="#" class="forgot-link" onclick="showForgotPassword(event)">نسيت كلمة المرور؟</a>
-            </div>
-            <button type="submit" class="submit-btn" id="loginBtn">دخول</button>
-        </form>
+    function showAlert(message, isError = true) {
+        alertBox.textContent = message;
+        alertBox.className = 'alert-box ' + (isError ? 'alert-error' : 'alert-success');
+        alertBox.style.display = 'block';
+    }
 
-        <!-- 2. نموذج إنشاء حساب جديد - المرحلة الأولى -->
-        <form id="registerForm" class="form-step">
-            <div class="form-group">
-                <label>الاسم الكامل</label>
-                <input type="text" id="regFullName" required placeholder="أحمد عصام احمد">
-            </div>
-            <div class="form-group">
-                <label>البريد الإلكتروني</label>
-                <input type="email" id="regEmail" required placeholder="example@mail.com">
-            </div>
-            <div class="form-group">
-                <label>الصف الدراسي</label>
-                <select id="regGrade" required>
-                    <option value="" disabled selected>اختر الصف الدراسي</option>
-                    <option value="الرابع العلمي">الرابع العلمي</option>
-                    <option value="الرابع الأدبي">الرابع الأدبي</option>
-                    <option value="الخامس العلمي">الخامس العلمي</option>
-                    <option value="الخامس الأدبي">الخامس الأدبي</option>
-                    <option value="السادس العلمي">السادس العلمي</option>
-                    <option value="السادس الأدبي">السادس الأدبي</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور (8 أحرف أو أكثر)</label>
-                <input type="password" id="regPassword" required minlength="8" placeholder="••••••••">
-            </div>
-            <button type="submit" class="submit-btn" id="registerBtn">إرسال رمز التوثيق</button>
-        </form>
+    registerForm.addEventListener('submit', async function (e) {
+        // منع إعادة تحميل الصفحة الافتراضية
+        e.preventDefault();
 
-        <!-- 2.1 نموذج إدخال رمز OTP الخاص بالتسجيل -->
-        <form id="verifyRegisterForm" class="form-step">
-            <div class="form-group">
-                <label>أدخل رمز التوثيق المكون من 6 أرقام المرسل لإيميلك</label>
-                <input type="text" id="regCode" maxlength="6" required placeholder="123456" style="text-align: center; letter-spacing: 4px; font-weight: bold; font-size: 18px;">
-            </div>
-            <button type="submit" class="submit-btn" id="verifyRegisterBtn">تأكيد الحساب والدخول</button>
-        </form>
+        const emailInput = document.getElementById('regEmail');
+        const email = emailInput.value.trim();
 
-        <!-- 3. نموذج طلب رمز نسيت كلمة المرور -->
-        <form id="forgotForm" class="form-step">
-            <div class="form-group">
-                <label>أدخل بريدك الإلكتروني لتلقي رمز التوثيق (OTP)</label>
-                <input type="email" id="forgotEmail" required placeholder="example@mail.com">
-            </div>
-            <button type="submit" class="submit-btn" id="forgotBtn">إرسال الرمز</button>
-            <a href="#" class="forgot-link" style="text-align: center; margin-top: 15px;" onclick="switchTab('login')">العودة لتسجيل الدخول</a>
-        </form>
-
-        <!-- 4. نموذج إدخال رمز OTP وكلمة المرور الجديدة -->
-        <form id="resetForm" class="form-step">
-            <div class="form-group">
-                <label>رمز التوثيق (OTP)</label>
-                <input type="text" id="resetCode" maxlength="6" required placeholder="123456" style="text-align: center; letter-spacing: 4px; font-weight: bold; font-size: 18px;">
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور الجديدة</label>
-                <input type="password" id="resetPassword" required minlength="8" placeholder="••••••••">
-            </div>
-            <button type="submit" class="submit-btn" id="resetBtn">تغيير كلمة المرور</button>
-        </form>
-    </div>
-
-    <script>
-        const API_BASE = 'https://masar-backend-gcpq.onrender.com/api/auth';
-        const DASHBOARD_PAGE = 'masar-dashboard.html';
-
-        let regTempData = {};
-
-        function showAlert(message, type = 'error') {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.innerText = message;
-            alertBox.className = `alert-box alert-${type}`;
-            alertBox.style.display = 'block';
+        if (!email) {
+            showAlert('يرجى إدخال البريد الإلكتروني بشكل صحيح.');
+            return;
         }
 
-        function hideAlert() {
-            document.getElementById('alertBox').style.display = 'none';
+        btnSendOtp.disabled = true;
+        btnSendOtp.textContent = 'جاري الإرسال...';
+        alertBox.style.display = 'none';
+
+        try {
+            const response = await fetch(`${API_BASE}/send-otp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showAlert(data.message || 'تم إرسال رمز التحقق بنجاح، تحقق من بريدك الإلكتروني.', false);
+            } else {
+                showAlert(data.error || data.message || 'حدث خطأ أثناء معالجة الطلب.');
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            showAlert('تعذر الاتصال بالسيرفر، تأكد من الاتصال بالإنتـرنت.');
+        } finally {
+            btnSendOtp.disabled = false;
+            btnSendOtp.textContent = 'إرسال رمز التحقق';
         }
+    });
+</script>
 
-        function switchTab(tab) {
-            hideAlert();
-            document.getElementById('tabButtons').style.display = 'flex';
-            
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
-
-            if (tab === 'login') {
-                tabs[0].classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else if (tab === 'register') {
-                tabs[1].classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
-
-        function showForgotPassword(e) {
-            e.preventDefault();
-            hideAlert();
-            document.getElementById('tabButtons').style.display = 'none';
-            document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
-            document.getElementById('forgotForm').classList.add('active');
-        }
-
-        // --- 1. طلب رمز OTP لإنشاء الحساب ---
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const btn = document.getElementById('registerBtn');
-            btn.disabled = true;
-            btn.innerText = 'جاري إرسال الرمز...';
-
-            regTempData = {
-                full_name: document.getElementById('regFullName').value.trim(),
-                email: document.getElementById('regEmail').value.trim(),
-                grade: document.getElementById('regGrade').value,
-                password: document.getElementById('regPassword').value
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/send-register-otp`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ email: regTempData.email })
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAlert('تم إرسال رمز التوثيق إلى بريدك الإلكتروني بنجاح', 'success');
-                    document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
-                    document.getElementById('verifyRegisterForm').classList.add('active');
-                } else {
-                    showAlert(data.error || 'حدث خطأ أثناء إرسال الرمز');
-                }
-            } catch (err) {
-                console.error("Fetch error: ", err);
-                showAlert('تعذر الاتصال بالسيرفر، تأكد من الاتصال بالإنترنت.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'إرسال رمز التوثيق';
-            }
-        });
-
-        // --- 1.1 تأكيد رمز OTP وإنشاء الحساب النهائي ---
-        document.getElementById('verifyRegisterForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const btn = document.getElementById('verifyRegisterBtn');
-            btn.disabled = true;
-            btn.innerText = 'جاري التحقق والتأكيد...';
-
-            const payload = {
-                ...regTempData,
-                code: document.getElementById('regCode').value.trim()
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/register`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAlert('تم تفعيل الحساب بنجاح! جاري التوجيه...', 'success');
-                    
-                    const token = data.token || data.access_token;
-                    if (token) localStorage.setItem('masar_token', token);
-                    if (data.user) localStorage.setItem('masar_user', JSON.stringify(data.user));
-
-                    setTimeout(() => {
-                        window.location.href = DASHBOARD_PAGE;
-                    }, 1200);
-                } else {
-                    showAlert(data.error || 'رمز التوثيق غير صحيح');
-                }
-            } catch (err) {
-                console.error("Fetch error: ", err);
-                showAlert('تعذر الاتصال بالسيرفر.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'تأكيد الحساب والدخول';
-            }
-        });
-
-        // --- 2. معالجة تسجيل الدخول ---
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const btn = document.getElementById('loginBtn');
-            btn.disabled = true;
-            btn.innerText = 'جاري تسجيل الدخول...';
-
-            const payload = {
-                email: document.getElementById('loginEmail').value.trim(),
-                password: document.getElementById('loginPassword').value
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/login`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    const token = data.token || data.access_token;
-                    if (token) localStorage.setItem('masar_token', token);
-                    if (data.user) localStorage.setItem('masar_user', JSON.stringify(data.user));
-
-                    window.location.href = DASHBOARD_PAGE;
-                } else {
-                    showAlert(data.error || 'البريد أو كلمة المرور غير صحيحة');
-                }
-            } catch (err) {
-                console.error("Fetch error: ", err);
-                showAlert('تعذر الاتصال بالسيرفر.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'دخول';
-            }
-        });
-
-        // --- 3. إرسال رمز OTP نسيت كلمة المرور ---
-        document.getElementById('forgotForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const btn = document.getElementById('forgotBtn');
-            btn.disabled = true;
-            btn.innerText = 'جاري الإرسال...';
-
-            const email = document.getElementById('forgotEmail').value.trim();
-
-            try {
-                const res = await fetch(`${API_BASE}/forgot-password`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAlert('تم إرسال رمز التوثيق إلى إيميلك، أدخله أدناه.', 'success');
-                    window.tempResetEmail = email;
-                    document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
-                    document.getElementById('resetForm').classList.add('active');
-                } else {
-                    showAlert(data.error || 'تعذر إرسال الرمز، أعد المحاولة.');
-                }
-            } catch (err) {
-                console.error("Fetch error: ", err);
-                showAlert('خطأ بالاتصال بالسيرفر.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'إرسال الرمز';
-            }
-        });
-
-        // --- 4. إعادة تعيين كلمة المرور بواسطة OTP ---
-        document.getElementById('resetForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const btn = document.getElementById('resetBtn');
-            btn.disabled = true;
-            btn.innerText = 'جاري التحديث...';
-
-            const payload = {
-                email: window.tempResetEmail || document.getElementById('forgotEmail').value.trim(),
-                code: document.getElementById('resetCode').value.trim(),
-                newPassword: document.getElementById('resetPassword').value
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/reset-password`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAlert('تم تغيير كلمة المرور بنجاح! يمكنك الدخول الآن.', 'success');
-                    setTimeout(() => switchTab('login'), 2000);
-                } else {
-                    showAlert(data.error || 'رمز التوثيق غير صحيح.');
-                }
-            } catch (err) {
-                console.error("Fetch error: ", err);
-                showAlert('تعذر الاتصال بالسيرفر.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'تغيير كلمة المرور';
-            }
-        });
-    </script>
 </body>
 </html>
