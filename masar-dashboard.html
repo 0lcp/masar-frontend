@@ -39,6 +39,7 @@ body {
   padding: 26px 20px;
   display:flex; flex-direction:column; gap: 28px;
   position: sticky; top:0; height:100vh;
+  transition: transform .25s ease;
 }
 .logo { display:flex; align-items:center; gap:10px; font-size:20px; }
 .logo-dot { width:9px; height:9px; border-radius:50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
@@ -57,13 +58,39 @@ body {
 .avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--teal-soft)); flex-shrink:0; }
 .profile-mini .pname { font-size:13px; font-weight:600; }
 .profile-mini .pgrade { font-size:11px; color: var(--muted); }
+
+/* قائمة الهاتف: بدل الإخفاء الكامل، تصير قائمة منزلقة (off-canvas) */
+.menu-btn {
+  display:none; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:10px; background: var(--panel);
+  border:1px solid var(--line); color:var(--text); cursor:pointer; font-size:18px; flex-shrink:0;
+}
+.sidebar-overlay {
+  display:none; position:fixed; inset:0; background: rgba(10,6,20,0.55); z-index:99;
+}
+.sidebar-overlay.show { display:block; }
+.sidebar-close { display:none; }
 @media (max-width: 880px) {
-  .sidebar { display:none; }
+  .menu-btn { display:flex; }
+  .sidebar {
+    position: fixed; top:0; right:0; z-index:100;
+    transform: translateX(100%);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.35);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-close {
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:8px; background: var(--panel-2);
+    border:1px solid var(--line); color:var(--text); cursor:pointer; font-size:15px;
+    margin-right:auto;
+  }
 }
 
 /* ---------- MAIN ---------- */
 .main { flex:1; padding: 30px 34px; max-width: 1100px; }
+@media (max-width: 620px) { .main { padding: 20px 16px; } }
 .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 30px; flex-wrap:wrap; gap:14px; }
+.topbar-left { display:flex; align-items:center; gap:14px; }
 .topbar h1 { font-size: 24px; }
 .topbar .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
 .streak {
@@ -84,19 +111,14 @@ body {
 .progress-fill { height:100%; border-radius:999px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
 
 /* ---------- SECTION HEAD ---------- */
-.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; }
 .section-head h2 { font-size: 18px; }
 .section-head .link { color: var(--gold-soft); font-size:13px; text-decoration:none; }
 
-/* ---------- SUBJECT PATH ---------- */
-.subjects { display:flex; flex-direction:column; gap:0; margin-bottom: 38px; }
-.subjects::before { content:none; }
-.subject-row {
-  position:relative;
-  display:flex; align-items:center; gap:18px;
-  background: var(--panel); border:1px solid var(--line); border-radius:16px;
-  padding: 16px 18px; margin-bottom: 12px;
-}
+/* ---------- SUBJECTS (Subject -> SubSection) ---------- */
+.subjects { display:flex; flex-direction:column; gap:14px; margin-bottom: 38px; }
+.subject-block { background: var(--panel); border:1px solid var(--line); border-radius:16px; padding: 16px 18px; }
+.subject-block-head { display:flex; align-items:center; gap:14px; margin-bottom: 4px; }
 .subj-icon {
   width:44px; height:44px; border-radius:12px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center; font-size:18px;
@@ -105,18 +127,24 @@ body {
 .subj-body { flex:1; min-width:0; }
 .subj-body .subj-name { font-size:15px; font-weight:600; margin-bottom:6px; }
 .subj-body .subj-meta { font-size:12px; color: var(--muted); }
-.subj-progress { width: 120px; flex-shrink:0; }
+.subj-progress { width: 110px; flex-shrink:0; }
 .subj-progress .pct { font-size:12px; color: var(--muted); text-align:left; margin-bottom:6px; }
+@media (max-width: 560px) { .subj-progress { display:none; } }
+
+.subsection-list { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); display:flex; flex-direction:column; gap:10px; }
+.subsection-row {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background: var(--panel-2); border-radius:12px; padding: 12px 14px;
+}
+.subsection-name { font-size:13px; font-weight:600; flex-shrink:0; }
+.subsection-meta { font-size:12px; color: var(--muted); flex:1; min-width:120px; }
 .subj-btn {
   background: var(--panel-2); color: var(--text); border:1px solid var(--line);
   border-radius:10px; padding: 9px 16px; font-size:13px; cursor:pointer; flex-shrink:0;
 }
 .subj-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
-@media (max-width: 620px) {
-  .subj-progress { display:none; }
-}
-.subject-row.locked { opacity: 0.85; }
-.lock-badge { font-size:16px; }
+.subsection-row.locked { opacity: 0.85; }
+.lock-badge { font-size:14px; }
 .subj-btn.unlock-btn { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight:700; }
 .subj-btn.unlock-btn:hover { color: var(--ink); }
 
@@ -139,27 +167,6 @@ body {
 .redeem-msg.show { display:block; }
 .redeem-msg.error { color:#FB7185; }
 .redeem-msg.success { color: var(--teal-soft); }
-
-/* ---------- TWO COL ---------- */
-.two-col { display:grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
-@media (max-width: 880px) { .two-col { grid-template-columns: 1fr; } }
-
-/* live class card */
-.live-card {
-  background: linear-gradient(160deg, var(--panel-2), var(--panel));
-  border:1px solid var(--line); border-radius:18px; padding:24px;
-}
-.live-badge {
-  display:inline-flex; align-items:center; gap:6px; font-size:12px; color: var(--danger);
-  background: rgba(244,63,94,0.12); border-radius:999px; padding:4px 12px; margin-bottom:14px;
-}
-.live-dot { width:6px; height:6px; border-radius:50%; background: var(--danger); }
-.live-card h3 { font-size:17px; margin-bottom:6px; }
-.live-card .meta { color: var(--muted); font-size:13px; margin-bottom:18px; }
-.btn-join {
-  background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
-  padding: 12px 24px; border-radius: 999px; border:none; cursor:pointer;
-}
 
 /* recommendation card */
 .reco-card {
@@ -189,13 +196,18 @@ body {
 </style>
 </head>
 <body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <div class="app">
-  <aside class="sidebar">
-    <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
     <nav class="nav-group">
       <div class="nav-item active"><span class="dot"></span>الرئيسية</div>
       <div class="nav-item"><span class="dot"></span>موادي</div>
-      <div class="nav-item"><span class="dot"></span>البث المباشر</div>
+      <div class="nav-item"><span class="dot"></span>الملازم والكتب</div>
+      <div class="nav-item"><span class="dot"></span>الوزاريات</div>
       <div class="nav-item"><span class="dot"></span>الاختبارات</div>
       <div class="nav-item"><span class="dot"></span>تقرير تقدمي</div>
       <div class="nav-item"><span class="dot"></span>الإعدادات</div>
@@ -218,9 +230,12 @@ body {
     </div>
 
     <div class="topbar">
-      <div>
-        <h1 id="greeting">هلا 👋</h1>
-        <div class="sub">هذا وين وصلت بمسارك هالأسبوع</div>
+      <div class="topbar-left">
+        <button class="menu-btn" onclick="openSidebar()">☰</button>
+        <div>
+          <h1 id="greeting">هلا 👋</h1>
+          <div class="sub">هذا وين وصلت بمسارك هالأسبوع</div>
+        </div>
       </div>
       <div class="streak">🔥 سلسلة مذاكرة: <strong>6 أيام</strong></div>
     </div>
@@ -247,7 +262,7 @@ body {
     </div>
 
     <div class="redeem-box" id="redeemBox">
-      <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">عندك مفتاح تفعيل؟ دخّله هنا يفتحلك المواد المدفوعة:</div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">عندك مفتاح تفعيل؟ دخّله هنا يفتحلك القسم المدفوع:</div>
       <div class="redeem-row">
         <input type="text" id="redeemInput" placeholder="MASAR-XXXXXXXXXX">
         <button onclick="redeemKey()">تفعيل</button>
@@ -256,43 +271,34 @@ body {
     </div>
 
     <div class="subjects" id="subjectsContainer">
-      <div class="subject-row" id="subjectsLoading">
+      <div class="subject-block" id="subjectsLoading">
         <div class="subj-body"><div class="subj-name">...جاري تحميل موادك</div></div>
       </div>
     </div>
 
-    <div class="two-col">
-      <div class="live-card">
-        <div class="live-badge"><span class="live-dot"></span>يبدا بعد 25 دقيقة</div>
-        <h3>مراجعة الفيزياء — قانون نيوتن الثاني</h3>
-        <div class="meta">الأستاذ محمد جاسم · حصة تفاعلية 60 دقيقة</div>
-        <button class="btn-join">انضم للحصة</button>
+    <div class="reco-card">
+      <div class="section-head" style="margin-bottom:14px;">
+        <h2 style="font-size:15px;">مقترح إلك</h2>
       </div>
-
-      <div class="reco-card">
-        <div class="section-head" style="margin-bottom:14px;">
-          <h2 style="font-size:15px;">مقترح إلك</h2>
+      <div class="reco-item">
+        <div class="reco-tag">↻</div>
+        <div class="reco-text">
+          <div class="t1">راجع درس "التفاعلات المزدوجة"</div>
+          <div class="t2">أخطأت بيه 3 أسئلة بآخر اختبار</div>
         </div>
-        <div class="reco-item">
-          <div class="reco-tag">↻</div>
-          <div class="reco-text">
-            <div class="t1">راجع درس "التفاعلات المزدوجة"</div>
-            <div class="t2">أخطأت بيه 3 أسئلة بآخر اختبار</div>
-          </div>
+      </div>
+      <div class="reco-item">
+        <div class="reco-tag">✓</div>
+        <div class="reco-text">
+          <div class="t1">اختبار قصير — المعادلات التربيعية</div>
+          <div class="t2">10 أسئلة · 8 دقايق</div>
         </div>
-        <div class="reco-item">
-          <div class="reco-tag">✓</div>
-          <div class="reco-text">
-            <div class="t1">اختبار قصير — المعادلات التربيعية</div>
-            <div class="t2">10 أسئلة · 8 دقايق</div>
-          </div>
-        </div>
-        <div class="reco-item">
-          <div class="reco-tag">▶</div>
-          <div class="reco-text">
-            <div class="t1">شاهد درس "التفاعلات الكيميائية 4"</div>
-            <div class="t2">الدرس الجاي بمسارك</div>
-          </div>
+      </div>
+      <div class="reco-item">
+        <div class="reco-tag">▶</div>
+        <div class="reco-text">
+          <div class="t1">شاهد درس "التفاعلات الكيميائية 4"</div>
+          <div class="t2">الدرس الجاي بمسارك</div>
         </div>
       </div>
     </div>
@@ -302,7 +308,15 @@ body {
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
 const token = sessionStorage.getItem('masar_token');
-const subjectIcons = { }; // backend already sends an icon emoji per subject
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
 
 async function apiGet(path) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -319,34 +333,50 @@ function renderSubjects(subjects) {
     container.innerHTML = '<div class="empty-state">ما فيه مواد مضافة لصفك بعد.</div>';
     return;
   }
-  container.innerHTML = subjects.map(s => {
-    const locked = s.locked;
-    return `
-      <div class="subject-row ${locked ? 'locked' : ''}">
-        <div class="subj-icon">${s.icon || '📘'}</div>
+  container.innerHTML = subjects.map(subject => `
+    <div class="subject-block">
+      <div class="subject-block-head">
+        <div class="subj-icon">${subject.icon || '📘'}</div>
         <div class="subj-body">
-          <div class="subj-name">${s.subject_name} ${locked ? '<span class="lock-badge">🔒</span>' : ''}</div>
-          <div class="subj-meta">${locked ? 'مادة مدفوعة — فعّل اشتراكك لتفتحها' : `${s.lessons_done} من ${s.lessons_total} دروس مكتملة`}</div>
+          <div class="subj-name">${subject.subject_name}</div>
+          <div class="subj-meta">${subject.lessons_done} من ${subject.lessons_total} دروس مكتملة</div>
         </div>
-        ${locked ? '' : `
         <div class="subj-progress">
-          <div class="pct">${s.percent}٪</div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${s.percent}%"></div></div>
-        </div>`}
-        ${locked
-          ? `<button class="subj-btn unlock-btn" onclick="toggleRedeemBox(true)">اشترك الحين</button>`
-          : `<button class="subj-btn" onclick="location.href='masar-lesson.html?subject=${s.subject_id}'">تكملة</button>`}
+          <div class="pct">${subject.percent}٪</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${subject.percent}%"></div></div>
+        </div>
       </div>
-    `;
-  }).join('');
+      <div class="subsection-list">
+        ${(subject.subsections || []).map(sub => `
+          <div class="subsection-row ${sub.locked ? 'locked' : ''}">
+            <div class="subsection-name">${sub.subsection_name} ${sub.locked ? '<span class="lock-badge">🔒</span>' : ''}</div>
+            <div class="subsection-meta">${sub.locked ? 'قسم مدفوع — فعّل اشتراكك لتفتحه' : `${sub.lessons_done} من ${sub.lessons_total} دروس · ${sub.percent}٪`}</div>
+            ${sub.locked
+              ? `<button class="subj-btn unlock-btn" onclick="toggleRedeemBox(true)">اشترك الحين</button>`
+              : `<button class="subj-btn" onclick="location.href='masar-lesson.html?subsection=${sub.subsection_id}'">تكملة</button>`}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
 function renderDemoSubjects() {
   // بيانات توضيحية تظهر لمن ما يكون مسجل دخول، بس بدون progress حقيقي
   const demo = [
-    { icon:'📐', subject_name:'الرياضيات', lessons_done:0, lessons_total:3, percent:0, locked:false },
-    { icon:'🧪', subject_name:'الكيمياء', lessons_done:0, lessons_total:3, percent:0, locked:false },
-    { icon:'⚛️', subject_name:'الفيزياء المكثف', lessons_done:0, lessons_total:2, percent:0, locked:true },
+    {
+      icon:'📐', subject_name:'الرياضيات', lessons_done:0, lessons_total:5, percent:0,
+      subsections: [
+        { subsection_id:1, subsection_name:'قسم مراجعة', lessons_done:0, lessons_total:3, percent:0, locked:false },
+        { subsection_id:2, subsection_name:'قسم متقدم', lessons_done:0, lessons_total:2, percent:0, locked:true },
+      ],
+    },
+    {
+      icon:'⚛️', subject_name:'الفيزياء', lessons_done:0, lessons_total:4, percent:0,
+      subsections: [
+        { subsection_id:3, subsection_name:'قسم أستاذ محمد', lessons_done:0, lessons_total:4, percent:0, locked:true },
+      ],
+    },
   ];
   renderSubjects(demo);
 }
