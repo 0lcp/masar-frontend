@@ -36,16 +36,28 @@ body {
 .logo-dot { width:10px; height:10px; border-radius:50%; background: var(--gold); box-shadow:0 0 14px var(--gold); }
 
 .icon { font-size:44px; margin-bottom:18px; }
-.icon.spin { animation: spin 1.2s linear infinite; display:inline-block; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 h1 { font-size:20px; margin-bottom:10px; }
 p { color: var(--muted); font-size:14px; line-height:1.7; margin-bottom:24px; }
 
-.btn {
-  display:inline-block; background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
-  padding:13px 28px; border-radius:12px; text-decoration:none;
+.field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; text-align:right; }
+.field label { font-size:13px; color: var(--muted); }
+.field input {
+  background: var(--panel-2); border:1px solid var(--line); border-radius:12px;
+  padding:13px 14px; color: var(--text); font-size:22px; font-family:inherit; outline:none;
+  text-align:center; letter-spacing:8px;
 }
+.field input:focus { border-color: var(--gold); }
+
+.btn {
+  display:inline-block; width:100%; background: var(--gold); color: var(--ink); font-weight:700; font-size:14px;
+  padding:13px 28px; border-radius:12px; border:none; cursor:pointer; text-decoration:none;
+}
+.btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+.msg { font-size:13px; border-radius:10px; padding:10px 12px; margin-bottom:16px; display:none; text-align:right; }
+.msg.show { display:block; }
+.msg.error { background: rgba(244,63,94,0.12); color:#FB7185; border:1px solid rgba(244,63,94,0.3); }
 </style>
 </head>
 <body>
@@ -53,64 +65,93 @@ p { color: var(--muted); font-size:14px; line-height:1.7; margin-bottom:24px; }
 <div class="card">
   <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
   <div id="content">
-    <div class="icon spin">⏳</div>
-    <h1>...جاري تفعيل حسابك</h1>
-    <p>لحظات وبس</p>
+    <div class="icon">⏳</div>
+    <h1>...جاري التحميل</h1>
   </div>
 </div>
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-const token = new URLSearchParams(location.search).get('token');
+const email = new URLSearchParams(location.search).get('email');
 
-async function verify() {
-  const content = document.getElementById('content');
+function showMissingEmail() {
+  document.getElementById('content').innerHTML = `
+    <div class="icon">⚠️</div>
+    <h1>الرابط ناقص</h1>
+    <p>هذا الرابط مو كامل. رجعي لصفحة التسجيل وحاولي مرة ثانية.</p>
+    <a href="masar-auth.html" class="btn">رجوع لتسجيل الدخول</a>
+  `;
+}
 
-  if (!token) {
-    content.innerHTML = `
-      <div class="icon">⚠️</div>
-      <h1>الرابط ناقص</h1>
-      <p>هذا الرابط مو كامل. تأكد إنك ضاغط الرابط اللي وصلك بالإيميل كامل.</p>
-      <a href="masar-auth.html" class="btn">رجوع لتسجيل الدخول</a>
-    `;
-    return;
+function showForm() {
+  document.getElementById('content').innerHTML = `
+    <div class="icon">📧</div>
+    <h1>فعّلي حسابك</h1>
+    <p>وصلك رمز تحقق مكوّن من 6 أرقام على<br><strong>${email}</strong></p>
+    <form onsubmit="return submitVerify(event)">
+      <div class="field">
+        <input type="text" id="code" placeholder="000000" maxlength="6" inputmode="numeric" required>
+      </div>
+      <div class="msg" id="formMsg"></div>
+      <button type="submit" class="btn" id="submitBtn">تفعيل الحساب</button>
+    </form>
+  `;
+}
+
+function showSuccess() {
+  document.getElementById('content').innerHTML = `
+    <div class="icon">🎉</div>
+    <h1>تم تفعيل حسابك بنجاح!</h1>
+    <p>هسه تكدر تسجل دخولك وتبدا مسارك.</p>
+    <a href="masar-auth.html" class="btn">سجل دخولك</a>
+  `;
+}
+
+async function submitVerify(e) {
+  e.preventDefault();
+  const code = document.getElementById('code').value.trim();
+  const msgEl = document.getElementById('formMsg');
+  const btn = document.getElementById('submitBtn');
+
+  if (code.length !== 6) {
+    msgEl.textContent = 'رمز التحقق لازم يكون 6 أرقام';
+    msgEl.className = 'msg show error';
+    return false;
   }
+
+  btn.disabled = true; btn.textContent = '...جاري التفعيل';
 
   try {
     const res = await fetch(`${API_BASE}/auth/verify-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ email, code }),
     });
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      content.innerHTML = `
-        <div class="icon">❌</div>
-        <h1>ما كدرنا نفعّل حسابك</h1>
-        <p>${data.error || 'الرابط غير صحيح أو منتهي الصلاحية.'}</p>
-        <a href="masar-auth.html" class="btn">رجوع لتسجيل الدخول</a>
-      `;
-      return;
+      msgEl.textContent = data.error || 'الرمز غير صحيح أو منتهي الصلاحية.';
+      msgEl.className = 'msg show error';
+      btn.disabled = false;
+      btn.textContent = 'تفعيل الحساب';
+      return false;
     }
 
-    content.innerHTML = `
-      <div class="icon">🎉</div>
-      <h1>تم تفعيل حسابك بنجاح!</h1>
-      <p>هسه تكدر تسجل دخولك وتبدا مسارك.</p>
-      <a href="masar-auth.html" class="btn">سجل دخولك</a>
-    `;
+    showSuccess();
   } catch (err) {
-    content.innerHTML = `
-      <div class="icon">❌</div>
-      <h1>ما كدرنا نوصل للسيرفر</h1>
-      <p>تأكد إن الباك اند شغّال وجرب مرة ثانية.</p>
-      <a href="masar-auth.html" class="btn">رجوع لتسجيل الدخول</a>
-    `;
+    msgEl.textContent = 'ما كدرنا نوصل للسيرفر. جربي مرة ثانية.';
+    msgEl.className = 'msg show error';
+    btn.disabled = false;
+    btn.textContent = 'تفعيل الحساب';
   }
+  return false;
 }
 
-verify();
+if (!email) {
+  showMissingEmail();
+} else {
+  showForm();
+}
 </script>
 
 </body>
