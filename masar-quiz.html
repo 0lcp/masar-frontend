@@ -99,7 +99,8 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-const token = localStorage.getItem('masar_token');
+// نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب وصفحة الدرس
+const token = sessionStorage.getItem('masar_token');
 const params = new URLSearchParams(location.search);
 const lessonId = params.get('lesson');
 
@@ -157,7 +158,8 @@ async function submitQuiz() {
   }));
 
   try {
-    const res = await fetch(`${API_BASE}/quizzes/${quiz.id}/submit`, {
+    // ملاحظة: مسار التسليم تحت /api/content (نفس بلوبرنت content_bp)، مو /api مباشرة
+    const res = await fetch(`${API_BASE}/content/quizzes/${quiz.id}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ answers }),
