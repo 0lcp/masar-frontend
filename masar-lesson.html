@@ -132,7 +132,7 @@ body {
   </aside>
 
   <main class="lesson-main">
-    <button class="mobile-sidebar-toggle" onclick="document.getElementById('lessonSidebar').style.display = document.getElementById('lessonSidebar').style.display === 'block' ? 'none' : 'block'">☰ كل دروس المادة</button>
+    <button class="mobile-sidebar-toggle" onclick="document.getElementById('lessonSidebar').style.display = document.getElementById('lessonSidebar').style.display === 'block' ? 'none' : 'block'">☰ كل دروس القسم</button>
     <div id="mainContent">
       <div class="state-box"><div class="icon">⏳</div>...جاري تحميل الدرس</div>
     </div>
@@ -141,13 +141,14 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-const token = localStorage.getItem('masar_token');
+// استخدم sessionStorage باستمرار — نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب
+const token = sessionStorage.getItem('masar_token');
 
 const params = new URLSearchParams(location.search);
-let subjectId = params.get('subject');
+let subsectionId = params.get('subsection');
 let currentLessonId = params.get('lesson');
 
-let subjectData = null;
+let subsectionData = null;
 let completedIds = new Set();
 
 async function apiGet(path) {
@@ -167,13 +168,13 @@ function renderState(icon, text, showLoginLink) {
     </div>`;
 }
 
-function renderSidebar(subject, lessons) {
-  document.getElementById('sidebarSubjectName').textContent = subject.icon + ' ' + subject.name;
+function renderSidebar(subsection, lessons) {
+  document.getElementById('sidebarSubjectName').textContent = subsection.icon + ' ' + subsection.name;
   document.getElementById('sidebarSubjectMeta').textContent = lessons.length + ' درس';
 
   document.getElementById('lessonList').innerHTML = lessons.map(l => `
     <div class="lesson-item ${l.id == currentLessonId ? 'active' : ''} ${completedIds.has(l.id) ? 'done' : ''}"
-         onclick="location.href='masar-lesson.html?subject=${subjectId}&lesson=${l.id}'">
+         onclick="location.href='masar-lesson.html?subsection=${subsectionId}&lesson=${l.id}'">
       <div class="lesson-check">${completedIds.has(l.id) ? '✓' : ''}</div>
       <div class="lesson-name">${l.title}</div>
       <div class="lesson-dur">${l.duration_minutes}د</div>
@@ -203,8 +204,8 @@ function renderLesson(lesson, lessons) {
       <button class="btn-nav" id="quizBtn" style="display:none;" onclick="location.href='masar-quiz.html?lesson=${lesson.id}'">📝 خذ الاختبار</button>
     </div>
     <div class="nav-row">
-      <button class="btn-nav" ${!prev ? 'disabled' : ''} onclick="${prev ? `location.href='masar-lesson.html?subject=${subjectId}&lesson=${prev.id}'` : ''}">→ الدرس السابق</button>
-      <button class="btn-nav" ${!next ? 'disabled' : ''} onclick="${next ? `location.href='masar-lesson.html?subject=${subjectId}&lesson=${next.id}'` : ''}">الدرس التالي ←</button>
+      <button class="btn-nav" ${!prev ? 'disabled' : ''} onclick="${prev ? `location.href='masar-lesson.html?subsection=${subsectionId}&lesson=${prev.id}'` : ''}">→ الدرس السابق</button>
+      <button class="btn-nav" ${!next ? 'disabled' : ''} onclick="${next ? `location.href='masar-lesson.html?subsection=${subsectionId}&lesson=${next.id}'` : ''}">الدرس التالي ←</button>
     </div>
   `;
 
@@ -236,7 +237,7 @@ async function markComplete(lessonId) {
     completedIds.add(lessonId);
     btn.textContent = '✓ تم إكمال الدرس';
     btn.classList.add('done');
-    renderSidebar(subjectData.subject, subjectData.subject.lessons);
+    renderSidebar(subsectionData.subsection, subsectionData.subsection.lessons);
   } catch (err) {
     alert(err.message);
     btn.disabled = false;
@@ -244,54 +245,50 @@ async function markComplete(lessonId) {
   }
 }
 
-async function loadCompletedIds() {
-  // القيمة الحقيقية تجي من subject.lessons[].completed مباشرة (شوف init())
-}
-
 async function init() {
-  if (!subjectId && currentLessonId) {
-    // جاي من صفحة الاختبار (بس فيها lesson id) — نجيب المادة من الدرس نفسه
+  if (!subsectionId && currentLessonId) {
+    // جاي من صفحة الاختبار (بس فيها lesson id) — نجيب القسم الفرعي من الدرس نفسه
     const lessonOnly = await apiGet(`/content/lessons/${currentLessonId}`);
     if (lessonOnly.ok && lessonOnly.data.lesson) {
-      subjectId = lessonOnly.data.lesson.subject_id;
+      subsectionId = lessonOnly.data.lesson.subsection_id;
     }
   }
 
-  if (!subjectId) {
-    renderState('⚠️', 'ماكو مادة محددة. ارجع للوحتك واختار مادة.', false);
+  if (!subsectionId) {
+    renderState('⚠️', 'ماكو قسم محدد. ارجع للوحتك واختار قسم.', false);
     return;
   }
 
-  const { ok, status, data } = await apiGet(`/content/subjects/${subjectId}`);
+  const { ok, data } = await apiGet(`/content/subsections/${subsectionId}`);
 
   if (!ok) {
-    renderState('❌', data.error || 'صار خطأ بجلب المادة', false);
+    renderState('❌', data.error || 'صار خطأ بجلب القسم', false);
     return;
   }
 
   if (data.locked) {
-    renderState('🔒', data.message || 'هذي مادة مدفوعة — فعّل اشتراكك أول', false);
+    renderState('🔒', data.message || 'هذا قسم مدفوع — فعّل اشتراكك أول', false);
     document.getElementById('mainContent').innerHTML += `<div class="state-box" style="margin-top:12px;"><a href="masar-dashboard.html">ارجع للوحة وفعّل مفتاح</a></div>`;
     return;
   }
 
-  subjectData = data;
-  const lessons = data.subject.lessons || [];
+  subsectionData = data;
+  const lessons = data.subsection.lessons || [];
   lessons.forEach(l => { if (l.completed) completedIds.add(l.id); });
 
   if (!lessons.length) {
-    renderState('📭', 'ماكو دروس بهذي المادة بعد.', false);
+    renderState('📭', 'ماكو دروس بهذا القسم بعد.', false);
     return;
   }
 
   if (!currentLessonId) currentLessonId = lessons[0].id;
 
-  renderSidebar(data.subject, lessons);
+  renderSidebar(data.subsection, lessons);
 
   const lessonRes = await apiGet(`/content/lessons/${currentLessonId}`);
   if (!lessonRes.ok) {
     if (lessonRes.status === 402) {
-      renderState('🔒', 'هذا الدرس بمادة مدفوعة — فعّل اشتراكك أول', false);
+      renderState('🔒', 'هذا الدرس بقسم مدفوع — فعّل اشتراكك أول', false);
     } else {
       renderState('❌', lessonRes.data.error || 'صار خطأ بجلب الدرس', false);
     }
