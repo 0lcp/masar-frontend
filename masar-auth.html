@@ -116,16 +116,13 @@ form { display:flex; flex-direction:column; gap: 16px; }
 <body>
 <div class="bg-glow"></div>
 <div class="bg-glow2"></div>
-
 <div class="card">
   <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
-
   <div class="rail">
     <div class="rail-dot active" id="dot1"></div>
     <div class="rail-line"></div>
     <div class="rail-dot" id="dot2"></div>
   </div>
-
   <div class="tabs">
     <div class="tab active" id="tabLogin" onclick="showPanel('login')">تسجيل الدخول</div>
     <div class="tab" id="tabSignup" onclick="showPanel('signup')">حساب جديد</div>
@@ -155,14 +152,13 @@ form { display:flex; flex-direction:column; gap: 16px; }
       <div class="form-msg" id="loginMsg"></div>
       <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
     </form>
-
     <div id="forgotBox" style="display:none; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رمز استعادة كلمة المرور:</p>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رابط استعادة كلمة المرور:</p>
       <form onsubmit="return submitForgotPassword(event)">
         <div class="field">
           <input type="email" id="forgotEmail" placeholder="بريدك الإلكتروني" required>
         </div>
-        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رمز الاستعادة</button>
+        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رابط الاستعادة</button>
         <div class="form-msg" id="forgotMsg"></div>
       </form>
     </div>
@@ -230,7 +226,6 @@ async function submitForgotPassword(e) {
   const msgEl = document.getElementById('forgotMsg');
   const btn = document.getElementById('forgotBtn');
   btn.disabled = true; btn.textContent = '...جاري الإرسال';
-
   try {
     const res = await fetch(`${API_BASE}/forgot-password`, {
       method: 'POST',
@@ -238,17 +233,14 @@ async function submitForgotPassword(e) {
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
-    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رمز الاستعادة';
+    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رابط الاستعادة';
     msgEl.className = 'form-msg show success';
-    setTimeout(() => {
-      location.href = `masar-reset-password.html?email=${encodeURIComponent(email)}`;
-    }, 1200);
   } catch (err) {
     msgEl.textContent = 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال.';
     msgEl.className = 'form-msg show error';
   } finally {
     btn.disabled = false;
-    btn.textContent = 'إرسال رمز الاستعادة';
+    btn.textContent = 'إرسال رابط الاستعادة';
   }
   return false;
 }
@@ -279,10 +271,12 @@ function showMsg(id, text, type) {
   el.textContent = text;
   el.className = 'form-msg show ' + type;
 }
+
 function clearMsg(id) {
   const el = document.getElementById(id);
   el.className = 'form-msg';
 }
+
 function setLoading(btnId, loading, idleText) {
   const btn = document.getElementById(btnId);
   btn.disabled = loading;
@@ -302,7 +296,6 @@ async function submitLogin() {
   clearMsg('loginMsg');
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPass').value;
-
   const emailOk = email.length > 3;
   const passOk = pass.length >= 8;
   setError('loginEmailField', !emailOk);
@@ -321,11 +314,19 @@ async function submitLogin() {
       showMsg('loginMsg', data.error || 'صار خطأ، حاول مرة ثانية', 'error');
       return false;
     }
+
     // خزّن التوكن محلياً لهذي الجلسة، واستخدمه بأي طلب لاحق للـ API
     sessionStorage.setItem('masar_token', data.access_token);
     showMsg('loginMsg', `هلا ${data.user.full_name} 👋 تم تسجيل الدخول بنجاح`, 'success');
-    // ودّي المستخدم للوحته بعد ثانية بسيطة عشان يشوف رسالة النجاح
-    setTimeout(() => { location.href = 'masar-dashboard.html'; }, 600);
+
+    // وجّه المستخدم حسب دوره: أدمن يروح للوحة الأدمن، الطالب يروح للوحة الطالب
+    setTimeout(() => {
+      if (data.user.role === 'admin') {
+        location.href = 'masar-admin.html';
+      } else {
+        location.href = 'masar-dashboard.html';
+      }
+    }, 600);
   } catch (err) {
     showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
   } finally {
@@ -351,8 +352,8 @@ async function submitSignup() {
   setError('signupEmailField', !emailOk);
   setError('gradeField', !gradeOk);
   setError('signupPassField', !passOk);
-  if (!nameOk || !emailOk || !gradeOk || !passOk) return false;
 
+  if (!nameOk || !emailOk || !gradeOk || !passOk) return false;
   if (!termsOk) {
     showMsg('signupMsg', 'لازم توافق على الشروط وسياسة الخصوصية', 'error');
     return false;
@@ -371,9 +372,6 @@ async function submitSignup() {
       return false;
     }
     showMsg('signupMsg', data.message || 'تم إنشاء الحساب! تحقق من إيميلك لتفعيله', 'success');
-    setTimeout(() => {
-      location.href = `masar-verify.html?email=${encodeURIComponent(email)}`;
-    }, 1200);
   } catch (err) {
     showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
   } finally {
