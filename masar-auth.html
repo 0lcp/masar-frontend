@@ -153,12 +153,12 @@ form { display:flex; flex-direction:column; gap: 16px; }
       <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
     </form>
     <div id="forgotBox" style="display:none; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رابط استعادة كلمة المرور:</p>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">اكتب إيميلك ونرسل لك رمز استعادة كلمة المرور:</p>
       <form onsubmit="return submitForgotPassword(event)">
         <div class="field">
           <input type="email" id="forgotEmail" placeholder="بريدك الإلكتروني" required>
         </div>
-        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رابط الاستعادة</button>
+        <button type="submit" class="btn-submit" id="forgotBtn">إرسال رمز الاستعادة</button>
         <div class="form-msg" id="forgotMsg"></div>
       </form>
     </div>
@@ -233,14 +233,17 @@ async function submitForgotPassword(e) {
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
-    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رابط الاستعادة';
+    msgEl.textContent = data.message || 'إذا كان الإيميل مسجل، راح يوصلك رمز الاستعادة';
     msgEl.className = 'form-msg show success';
+    setTimeout(() => {
+      location.href = `masar-reset-password.html?email=${encodeURIComponent(email)}`;
+    }, 1200);
   } catch (err) {
     msgEl.textContent = 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال.';
     msgEl.className = 'form-msg show error';
   } finally {
     btn.disabled = false;
-    btn.textContent = 'إرسال رابط الاستعادة';
+    btn.textContent = 'إرسال رمز الاستعادة';
   }
   return false;
 }
@@ -372,6 +375,9 @@ async function submitSignup() {
       return false;
     }
     showMsg('signupMsg', data.message || 'تم إنشاء الحساب! تحقق من إيميلك لتفعيله', 'success');
+    setTimeout(() => {
+      location.href = `masar-verify.html?email=${encodeURIComponent(email)}`;
+    }, 1200);
   } catch (err) {
     showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
   } finally {
