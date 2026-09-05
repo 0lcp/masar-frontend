@@ -86,8 +86,9 @@ form { display:flex; flex-direction:column; gap: 16px; }
 .field input:focus, .field select:focus { border-color: var(--gold); }
 .field input::placeholder { color: #6B6392; }
 .field-error { font-size: 12px; color: var(--danger); display:none; }
-.field.has-error input { border-color: var(--danger); }
+.field.has-error input, .field.has-error select { border-color: var(--danger); }
 .field.has-error .field-error { display:block; }
+.field select:disabled { opacity: 0.6; cursor: not-allowed; }
 .row-between { display:flex; align-items:center; justify-content:space-between; font-size: 13px; }
 .checkbox-row { display:flex; align-items:center; gap:8px; color: var(--muted); }
 .checkbox-row input { accent-color: var(--gold); }
@@ -184,14 +185,7 @@ form { display:flex; flex-direction:column; gap: 16px; }
       <div class="field" id="gradeField">
         <label for="grade">الصف الدراسي</label>
         <select id="grade">
-          <option value="">اختر صفك</option>
-          <option>السادس ابتدائي</option>
-          <option>الأول متوسط</option>
-          <option>الثاني متوسط</option>
-          <option>الثالث متوسط</option>
-          <option>الرابع إعدادي</option>
-          <option>الخامس إعدادي</option>
-          <option>السادس إعدادي</option>
+          <option value="">...جاري تحميل الصفوف</option>
         </select>
         <span class="field-error">اختر صفك الدراسي</span>
       </div>
@@ -227,7 +221,7 @@ async function submitForgotPassword(e) {
   const btn = document.getElementById('forgotBtn');
   btn.disabled = true; btn.textContent = '...جاري الإرسال';
   try {
-    const res = await fetch(`${API_BASE}/forgot-password`, {
+    const res = await fetch(`${AUTH_BASE}/forgot-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
@@ -267,7 +261,9 @@ function setError(fieldId, hasError) {
 }
 
 // عنوان الباك اند — غيّره إذا شغّلته على سيرفر أو منفذ (port) مختلف
-const API_BASE = 'https://masar-backend-qcpq.onrender.com/api/auth';
+const API_ROOT = 'https://masar-backend-qcpq.onrender.com/api';
+const AUTH_BASE = `${API_ROOT}/auth`;
+const CONTENT_BASE = `${API_ROOT}/content`;
 
 function showMsg(id, text, type) {
   const el = document.getElementById(id);
@@ -285,6 +281,26 @@ function setLoading(btnId, loading, idleText) {
   btn.disabled = loading;
   btn.textContent = loading ? '...جاري التحقق' : idleText;
 }
+
+// ============ جلب الصفوف الدراسية من الباك اند ============
+async function loadGrades() {
+  const select = document.getElementById('grade');
+  try {
+    const res = await fetch(`${CONTENT_BASE}/grades`);
+    const data = await res.json();
+    if (!res.ok || !data.success || !Array.isArray(data.grades) || data.grades.length === 0) {
+      throw new Error('no grades');
+    }
+    select.innerHTML = '<option value="">اختر صفك</option>' +
+      data.grades.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    select.disabled = false;
+  } catch (err) {
+    select.innerHTML = '<option value="">تعذّر تحميل الصفوف</option>';
+    select.disabled = true;
+    showMsg('signupMsg', 'ما كدرنا نجيب قائمة الصفوف من السيرفر. أعد تحميل الصفحة.', 'error');
+  }
+}
+loadGrades();
 
 async function handleSubmit(e, type) {
   e.preventDefault();
@@ -307,7 +323,7 @@ async function submitLogin() {
 
   setLoading('loginBtn', true);
   try {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${AUTH_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass }),
@@ -331,7 +347,7 @@ async function submitLogin() {
       }
     }, 600);
   } catch (err) {
-    showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
+    showMsg('loginMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + AUTH_BASE, 'error');
   } finally {
     setLoading('loginBtn', false, 'دخول');
   }
@@ -342,13 +358,14 @@ async function submitSignup() {
   clearMsg('signupMsg');
   const full_name = document.getElementById('fullName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
-  const grade = document.getElementById('grade').value;
+  const gradeSelect = document.getElementById('grade');
+  const grade_id = gradeSelect.value ? parseInt(gradeSelect.value, 10) : null;
   const password = document.getElementById('signupPass').value;
   const termsOk = document.getElementById('terms').checked;
 
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const nameOk = full_name.length >= 3;
-  const gradeOk = grade !== '';
+  const gradeOk = !!grade_id;
   const passOk = password.length >= 8;
 
   setError('nameField', !nameOk);
@@ -364,10 +381,10 @@ async function submitSignup() {
 
   setLoading('signupBtn', true);
   try {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(`${AUTH_BASE}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name, email, password, grade }),
+      body: JSON.stringify({ full_name, email, password, grade_id }),
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
@@ -379,7 +396,7 @@ async function submitSignup() {
       location.href = `masar-verify.html?email=${encodeURIComponent(email)}`;
     }, 1200);
   } catch (err) {
-    showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + API_BASE, 'error');
+    showMsg('signupMsg', 'ما كدرنا نوصل للسيرفر. تأكد إن الباك اند شغّال على ' + AUTH_BASE, 'error');
   } finally {
     setLoading('signupBtn', false, 'إنشاء الحساب');
   }
