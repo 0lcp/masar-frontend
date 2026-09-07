@@ -209,8 +209,8 @@ body {
       <a class="nav-item" href="masar-dashboard.html"><span class="dot"></span>موادي</a>
       <a class="nav-item" href="masar-library.html"><span class="dot"></span>الملازم والكتب</a>
       <a class="nav-item" href="masar-wazari.html"><span class="dot"></span>الوزاريات</a>
-      <div class="nav-item"><span class="dot"></span>الاختبارات</div>
-      <div class="nav-item"><span class="dot"></span>تقرير تقدمي</div>
+      <a class="nav-item" href="masar-quizzes.html"><span class="dot"></span>الاختبارات</a>
+      <a class="nav-item" href="masar-progress.html"><span class="dot"></span>تقرير تقدمي</a>
       <a class="nav-item" href="masar-settings.html"><span class="dot"></span>الإعدادات</a>
     </nav>
     <div class="sidebar-bottom">
@@ -238,7 +238,7 @@ body {
           <div class="sub">هذا وين وصلت بمسارك هالأسبوع</div>
         </div>
       </div>
-      <div class="streak">🔥 سلسلة مذاكرة: <strong>6 أيام</strong></div>
+      <div class="streak">🔥 سلسلة مذاكرة: <strong id="streakDays">—</strong></div>
     </div>
 
     <div class="overview">
@@ -277,31 +277,11 @@ body {
       </div>
     </div>
 
-    <div class="reco-card">
+    <div class="reco-card" id="recoCard" style="display:none;">
       <div class="section-head" style="margin-bottom:14px;">
         <h2 style="font-size:15px;">مقترح إلك</h2>
       </div>
-      <div class="reco-item">
-        <div class="reco-tag">↻</div>
-        <div class="reco-text">
-          <div class="t1">راجع درس "التفاعلات المزدوجة"</div>
-          <div class="t2">أخطأت بيه 3 أسئلة بآخر اختبار</div>
-        </div>
-      </div>
-      <div class="reco-item">
-        <div class="reco-tag">✓</div>
-        <div class="reco-text">
-          <div class="t1">اختبار قصير — المعادلات التربيعية</div>
-          <div class="t2">10 أسئلة · 8 دقايق</div>
-        </div>
-      </div>
-      <div class="reco-item">
-        <div class="reco-tag">▶</div>
-        <div class="reco-text">
-          <div class="t1">شاهد درس "التفاعلات الكيميائية 4"</div>
-          <div class="t2">الدرس الجاي بمسارك</div>
-        </div>
-      </div>
+      <div id="recoList"></div>
     </div>
   </main>
 </div>
@@ -382,6 +362,38 @@ function renderDemoSubjects() {
   renderSubjects(demo);
 }
 
+const RECO_ICONS = { review: '↻', next_lesson: '▶', quiz: '✓' };
+
+function renderRecommendations(recommendations) {
+  const card = document.getElementById('recoCard');
+  const list = document.getElementById('recoList');
+  if (!recommendations || !recommendations.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  list.innerHTML = recommendations.map(reco => `
+    <div class="reco-item">
+      <div class="reco-tag">${RECO_ICONS[reco.type] || '•'}</div>
+      <div class="reco-text">
+        <div class="t1">${reco.title}</div>
+        <div class="t2">${reco.subtitle}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadHomeExtras() {
+  try {
+    const data = await apiGet('/content/home-extras');
+    document.getElementById('streakDays').textContent = `${data.streak_days} ${data.streak_days === 1 ? 'يوم' : 'أيام'}`;
+    renderRecommendations(data.recommendations);
+  } catch (err) {
+    document.getElementById('streakDays').textContent = '—';
+    document.getElementById('recoCard').style.display = 'none';
+  }
+}
+
 function toggleRedeemBox(forceOpen) {
   const box = document.getElementById('redeemBox');
   if (forceOpen) { box.classList.add('show'); return; }
@@ -427,6 +439,8 @@ async function loadDashboard() {
     document.getElementById('overallPct').textContent = '—';
     document.getElementById('lessonsDone').textContent = '—';
     document.getElementById('lessonsTotal').textContent = '—';
+    document.getElementById('streakDays').textContent = '—';
+    document.getElementById('recoCard').style.display = 'none';
     renderDemoSubjects();
     return;
   }
@@ -444,6 +458,8 @@ async function loadDashboard() {
     document.getElementById('lessonsDone').textContent = progressData.lessons_done;
     document.getElementById('lessonsTotal').textContent = progressData.lessons_total;
     renderSubjects(progressData.subjects);
+
+    loadHomeExtras();
   } catch (err) {
     document.getElementById('authGuard').classList.add('show');
     document.getElementById('authGuard').querySelector('span').textContent =
