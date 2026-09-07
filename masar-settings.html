@@ -128,6 +128,12 @@ body {
   font-family:inherit; outline:none;
 }
 .field input:focus { border-color: var(--gold); }
+.field select {
+  width:100%; background: var(--panel-2); border:1px solid var(--line);
+  border-radius:10px; padding:11px 12px; color: var(--text); font-size:14px;
+  font-family:inherit; outline:none;
+}
+.field select:focus { border-color: var(--gold); }
 
 .btn {
   background: var(--gold); color: var(--ink); font-weight:700; font-size:13px;
@@ -196,17 +202,21 @@ body {
     <div class="card" id="accountCard">
       <h2>بيانات الحساب</h2>
       <div class="info-row">
-        <span class="label">الاسم الكامل</span>
-        <span class="value" id="infoName">—</span>
-      </div>
-      <div class="info-row">
         <span class="label">البريد الإلكتروني</span>
         <span class="value" id="infoEmail">—</span>
       </div>
-      <div class="info-row">
-        <span class="label">الصف الدراسي</span>
-        <span class="value" id="infoGrade">—</span>
+      <div class="field" style="margin-top:14px;">
+        <label>الاسم الكامل</label>
+        <input type="text" id="nameInput" placeholder="اسمك الكامل">
       </div>
+      <div class="field">
+        <label>الصف الدراسي</label>
+        <select id="gradeSelect">
+          <option value="">...جاري تحميل الصفوف</option>
+        </select>
+      </div>
+      <button class="btn" onclick="saveProfile()" id="saveProfileBtn">حفظ التعديلات</button>
+      <div class="form-msg" id="profileMsg"></div>
     </div>
 
     <div class="card" id="passwordCard">
@@ -269,6 +279,28 @@ async function apiPost(path, body) {
   return data;
 }
 
+async function apiPatch(path, body) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'فشل الطلب');
+  return data;
+}
+
+async function loadGradeOptions(selectedGradeId) {
+  const gradeSelect = document.getElementById('gradeSelect');
+  try {
+    const data = await apiGet('/content/grades');
+    gradeSelect.innerHTML = data.grades.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    if (selectedGradeId) gradeSelect.value = selectedGradeId;
+  } catch (err) {
+    gradeSelect.innerHTML = '<option value="">تعذر تحميل الصفوف</option>';
+  }
+}
+
 async function loadAccount() {
   if (!token) {
     document.getElementById('authGuard').classList.add('show');
@@ -285,13 +317,42 @@ async function loadAccount() {
     userEmail = user.email;
     document.getElementById('sidebarName').textContent = user.full_name;
     document.getElementById('sidebarGrade').textContent = user.grade || '—';
-    document.getElementById('infoName').textContent = user.full_name;
     document.getElementById('infoEmail').textContent = user.email;
-    document.getElementById('infoGrade').textContent = user.grade || '—';
+    document.getElementById('nameInput').value = user.full_name;
+    await loadGradeOptions(user.grade_id);
   } catch (err) {
     document.getElementById('authGuard').classList.add('show');
     document.getElementById('authGuard').querySelector('span').textContent =
       'ما كدرنا نجيب بياناتك (' + err.message + ')';
+  }
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('saveProfileBtn');
+  const msgEl = document.getElementById('profileMsg');
+  const fullName = document.getElementById('nameInput').value.trim();
+  const gradeId = document.getElementById('gradeSelect').value;
+
+  if (fullName.length < 3) {
+    msgEl.textContent = 'الاسم الكامل يجب ألا يقل عن 3 أحرف';
+    msgEl.className = 'form-msg show error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '...جاري الحفظ';
+  try {
+    const data = await apiPatch('/auth/me', { full_name: fullName, grade_id: gradeId ? parseInt(gradeId) : null });
+    msgEl.textContent = data.message;
+    msgEl.className = 'form-msg show success';
+    document.getElementById('sidebarName').textContent = data.user.full_name;
+    document.getElementById('sidebarGrade').textContent = data.user.grade || '—';
+  } catch (err) {
+    msgEl.textContent = err.message;
+    msgEl.className = 'form-msg show error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'حفظ التعديلات';
   }
 }
 
