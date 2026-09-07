@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار — الملازم والكتب</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+:root {
+  --ink: #1A1030;
+  --panel: #241B3D;
+  --panel-2: #2E2350;
+  --gold: #FF6F5E;
+  --gold-soft: #FF9587;
+  --teal: #22B07D;
+  --teal-soft: #6EE7B7;
+  --text: #F7F3FF;
+  --muted: #A79FC7;
+  --line: rgba(247,243,255,0.09);
+  --danger: #F43F5E;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  min-height:100vh;
+}
+.display { font-family:'El Messiri', serif; font-weight:700; }
+
+/* ---------- LAYOUT ---------- */
+.app { display:flex; min-height:100vh; }
+
+/* ---------- SIDEBAR (same as dashboard) ---------- */
+.sidebar {
+  width: 240px; flex-shrink:0;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  padding: 26px 20px;
+  display:flex; flex-direction:column; gap: 28px;
+  position: sticky; top:0; height:100vh;
+  transition: transform .25s ease;
+}
+.logo { display:flex; align-items:center; gap:10px; font-size:20px; }
+.logo-dot { width:9px; height:9px; border-radius:50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+.nav-group { display:flex; flex-direction:column; gap: 4px; }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding: 11px 14px; border-radius: 12px; color: var(--muted);
+  font-size:14px; font-weight:500; cursor:pointer; transition: all .15s;
+  text-decoration:none;
+}
+.nav-item .dot { width:6px; height:6px; border-radius:50%; background: var(--line); flex-shrink:0; }
+.nav-item:hover { background: var(--panel-2); color: var(--text); }
+.nav-item.active { background: var(--panel-2); color: var(--gold-soft); }
+.nav-item.active .dot { background: var(--gold); box-shadow:0 0 6px var(--gold); }
+.sidebar-bottom { margin-top:auto; }
+.profile-mini { display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; background: var(--panel-2); }
+.avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--teal-soft)); flex-shrink:0; }
+.profile-mini .pname { font-size:13px; font-weight:600; }
+.profile-mini .pgrade { font-size:11px; color: var(--muted); }
+
+.menu-btn {
+  display:none; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:10px; background: var(--panel);
+  border:1px solid var(--line); color:var(--text); cursor:pointer; font-size:18px; flex-shrink:0;
+}
+.sidebar-overlay {
+  display:none; position:fixed; inset:0; background: rgba(10,6,20,0.55); z-index:99;
+}
+.sidebar-overlay.show { display:block; }
+.sidebar-close { display:none; }
+@media (max-width: 880px) {
+  .menu-btn { display:flex; }
+  .sidebar {
+    position: fixed; top:0; right:0; z-index:100;
+    transform: translateX(100%);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.35);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-close {
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:8px; background: var(--panel-2);
+    border:1px solid var(--line); color:var(--text); cursor:pointer; font-size:15px;
+    margin-right:auto;
+  }
+}
+
+/* ---------- MAIN ---------- */
+.main { flex:1; padding: 30px 34px; max-width: 1100px; }
+@media (max-width: 620px) { .main { padding: 20px 16px; } }
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 22px; flex-wrap:wrap; gap:14px; }
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.topbar h1 { font-size: 24px; }
+.topbar .sub { color: var(--muted); font-size: 14px; margin-top:4px; }
+
+/* ---------- FILTER BAR ---------- */
+.filters {
+  display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+  background: var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding: 14px 16px; margin-bottom: 22px;
+}
+.filters select {
+  background: var(--panel-2); color: var(--text); border:1px solid var(--line);
+  border-radius:10px; padding:10px 14px; font-size:13px; font-family:inherit; outline:none;
+  min-width:160px;
+}
+.filters select:focus { border-color: var(--gold); }
+.filters .count { margin-right:auto; color: var(--muted); font-size:13px; }
+@media (max-width: 560px) { .filters .count { margin-right:0; order:3; width:100%; } }
+
+.auth-guard {
+  display:none; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background: rgba(255,111,94,0.1); border:1px solid rgba(255,111,94,0.35);
+  border-radius:16px; padding:16px 20px; margin-bottom:24px; font-size:14px;
+}
+.auth-guard.show { display:flex; }
+.auth-guard a {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:13px;
+  padding: 9px 20px; border-radius: 999px; text-decoration:none; flex-shrink:0;
+}
+
+.redeem-box {
+  background: var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px;
+  margin-bottom:22px; display:none;
+}
+.redeem-box.show { display:block; }
+.redeem-row { display:flex; gap:10px; flex-wrap:wrap; }
+.redeem-row input {
+  flex:1; min-width:160px; background: var(--panel-2); border:1px solid var(--line);
+  border-radius:10px; padding:11px 12px; color: var(--text); font-size:14px; font-family:monospace; outline:none;
+}
+.redeem-row input:focus { border-color: var(--gold); }
+.redeem-row button {
+  background: var(--gold); color: var(--ink); font-weight:700; font-size:13px;
+  padding:11px 20px; border-radius:10px; border:none; cursor:pointer; flex-shrink:0;
+}
+.redeem-msg { font-size:13px; margin-top:10px; display:none; }
+.redeem-msg.show { display:block; }
+.redeem-msg.error { color:#FB7185; }
+.redeem-msg.success { color: var(--teal-soft); }
+
+/* ---------- FILE GRID ---------- */
+.file-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.file-card {
+  background: var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding: 18px; display:flex; flex-direction:column; gap:12px;
+}
+.file-top { display:flex; align-items:flex-start; gap:12px; }
+.file-icon {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:19px;
+  background: var(--panel-2); color: var(--gold);
+}
+.file-info { flex:1; min-width:0; }
+.file-title { font-size:14px; font-weight:600; margin-bottom:5px; line-height:1.4; }
+.file-meta { font-size:12px; color: var(--muted); }
+.file-lock { position:relative; }
+.lock-note {
+  font-size:12px; color: var(--gold-soft); background: rgba(255,111,94,0.1);
+  border-radius:10px; padding: 8px 10px;
+}
+.file-btn {
+  background: var(--panel-2); color: var(--text); border:1px solid var(--line);
+  border-radius:10px; padding: 10px 14px; font-size:13px; cursor:pointer; text-align:center;
+  text-decoration:none; display:block;
+}
+.file-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
+.file-btn.unlock-btn { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight:700; }
+.file-btn.unlock-btn:hover { color: var(--ink); }
+
+.empty-state { color: var(--muted); font-size:14px; padding: 40px 20px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="logo"><span class="logo-dot"></span><span class="display">مسار</span></div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <nav class="nav-group">
+      <a class="nav-item" href="masar-dashboard.html"><span class="dot"></span>الرئيسية</a>
+      <a class="nav-item" href="masar-dashboard.html"><span class="dot"></span>موادي</a>
+      <a class="nav-item active" href="masar-library.html"><span class="dot"></span>الملازم والكتب</a>
+      <div class="nav-item"><span class="dot"></span>الوزاريات</div>
+      <div class="nav-item"><span class="dot"></span>الاختبارات</div>
+      <div class="nav-item"><span class="dot"></span>تقرير تقدمي</div>
+      <div class="nav-item"><span class="dot"></span>الإعدادات</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="profile-mini">
+        <div class="avatar"></div>
+        <div>
+          <div class="pname" id="sidebarName">...</div>
+          <div class="pgrade" id="sidebarGrade">...</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="auth-guard" id="authGuard">
+      <span>سجل دخولك عشان يفتح إلك الصف مباشرة ونعرف الملفات المتاحة إلك بالضبط.</span>
+      <a href="masar-auth.html">سجل دخولك</a>
+    </div>
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" onclick="openSidebar()">☰</button>
+        <div>
+          <h1>الملازم والكتب</h1>
+          <div class="sub">ملازم وكتب PDF مرتبة حسب صفك ومادتك</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <select id="gradeSelect"><option value="">...جاري تحميل الصفوف</option></select>
+      <select id="subjectSelect"><option value="">كل المواد</option></select>
+      <div class="count" id="fileCount"></div>
+    </div>
+
+    <div class="redeem-box" id="redeemBox">
+      <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">عندك مفتاح تفعيل؟ دخّله هنا يفتحلك الملف:</div>
+      <div class="redeem-row">
+        <input type="text" id="redeemInput" placeholder="MASAR-XXXXXXXXXX">
+        <button onclick="redeemKey()">تفعيل</button>
+      </div>
+      <div class="redeem-msg" id="redeemMsg"></div>
+    </div>
+
+    <div class="file-grid" id="fileGrid">
+      <div class="empty-state">...جاري تحميل الملفات</div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
+const token = sessionStorage.getItem('masar_token');
+let currentGradeId = null;
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+async function apiGet(path) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'فشل الطلب');
+  return data;
+}
+
+function formatSize(kb) {
+  if (!kb) return '';
+  if (kb >= 1024) return (kb / 1024).toFixed(1) + ' ميغابايت';
+  return kb + ' كيلوبايت';
+}
+
+function toggleRedeemBox(forceOpen) {
+  const box = document.getElementById('redeemBox');
+  if (forceOpen) { box.classList.add('show'); return; }
+  box.classList.toggle('show');
+}
+
+async function redeemKey() {
+  const input = document.getElementById('redeemInput');
+  const code = input.value.trim();
+  const msgEl = document.getElementById('redeemMsg');
+  if (!code) return;
+
+  if (!token) {
+    msgEl.textContent = 'لازم تسجل دخولك أول عشان تفعّل مفتاح';
+    msgEl.className = 'redeem-msg show error';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/subscription/redeem`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'الكود غير صحيح');
+    msgEl.textContent = data.message;
+    msgEl.className = 'redeem-msg show success';
+    input.value = '';
+    loadFiles();
+  } catch (err) {
+    msgEl.textContent = err.message;
+    msgEl.className = 'redeem-msg show error';
+  }
+}
+
+function renderFiles(files) {
+  const grid = document.getElementById('fileGrid');
+  document.getElementById('fileCount').textContent = files.length ? `${files.length} ملف` : '';
+
+  if (!files.length) {
+    grid.innerHTML = '<div class="empty-state">ماكو ملفات مطابقة لهذا الفلتر بعد.</div>';
+    return;
+  }
+
+  grid.innerHTML = files.map(file => `
+    <div class="file-card">
+      <div class="file-top">
+        <div class="file-icon">📄</div>
+        <div class="file-info">
+          <div class="file-title">${file.title}</div>
+          <div class="file-meta">${file.subject ? file.subject + ' · ' : ''}${formatSize(file.file_size_kb)}</div>
+        </div>
+      </div>
+      ${file.unlocked
+        ? `<a class="file-btn" href="${file.file_url}" target="_blank" rel="noopener">فتح الملف</a>`
+        : `<div class="file-lock">
+             <div class="lock-note">🔒 ملف مدفوع${file.price ? ' — ' + file.price + ' ' + file.currency : ''}</div>
+           </div>
+           <button class="file-btn unlock-btn" onclick="toggleRedeemBox(true)">افتح بمفتاح تفعيل</button>`}
+    </div>
+  `).join('');
+}
+
+async function loadSubjects(gradeId) {
+  const subjectSelect = document.getElementById('subjectSelect');
+  try {
+    const data = await apiGet(`/subjects?grade_id=${gradeId}`);
+    subjectSelect.innerHTML = '<option value="">كل المواد</option>' +
+      data.subjects.map(s => `<option value="${s.id}">${s.icon || ''} ${s.name}</option>`).join('');
+  } catch (err) {
+    subjectSelect.innerHTML = '<option value="">كل المواد</option>';
+  }
+}
+
+async function loadFiles() {
+  const grid = document.getElementById('fileGrid');
+  if (!currentGradeId) return;
+  grid.innerHTML = '<div class="empty-state">...جاري تحميل الملفات</div>';
+
+  const subjectId = document.getElementById('subjectSelect').value;
+  let path = `/library?grade_id=${currentGradeId}`;
+  if (subjectId) path += `&subject_id=${subjectId}`;
+
+  try {
+    const data = await apiGet(path);
+    renderFiles(data.files);
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state">ما كدرنا نجيب الملفات (${err.message})</div>`;
+  }
+}
+
+async function initGradeSelect() {
+  const gradeSelect = document.getElementById('gradeSelect');
+  try {
+    const data = await apiGet('/grades');
+    gradeSelect.innerHTML = data.grades.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+
+    if (token) {
+      try {
+        const meData = await apiGet('/auth/me');
+        const user = meData.user;
+        document.getElementById('sidebarName').textContent = user.full_name;
+        document.getElementById('sidebarGrade').textContent = user.grade || '—';
+        if (user.grade_id) {
+          currentGradeId = user.grade_id;
+          gradeSelect.value = user.grade_id;
+        }
+      } catch (err) {
+        document.getElementById('authGuard').classList.add('show');
+      }
+    } else {
+      document.getElementById('authGuard').classList.add('show');
+      document.getElementById('sidebarName').textContent = 'زائر';
+      document.getElementById('sidebarGrade').textContent = 'اختر صفك بالأسفل';
+    }
+
+    if (!currentGradeId && data.grades.length) {
+      currentGradeId = data.grades[0].id;
+      gradeSelect.value = currentGradeId;
+    }
+
+    await loadSubjects(currentGradeId);
+    await loadFiles();
+  } catch (err) {
+    gradeSelect.innerHTML = '<option value="">تعذر تحميل الصفوف</option>';
+    document.getElementById('fileGrid').innerHTML =
+      `<div class="empty-state">ما كدرنا نتصل بالسيرفر (${err.message})</div>`;
+  }
+}
+
+document.getElementById('gradeSelect').addEventListener('change', async (e) => {
+  currentGradeId = e.target.value;
+  await loadSubjects(currentGradeId);
+  await loadFiles();
+});
+document.getElementById('subjectSelect').addEventListener('change', loadFiles);
+
+initGradeSelect();
+</script>
+</body>
+</html>
