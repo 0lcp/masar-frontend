@@ -257,7 +257,7 @@ function renderQuizzes(quizzes) {
 async function loadSubjects(gradeId) {
   const subjectSelect = document.getElementById('subjectSelect');
   try {
-    const data = await apiGet(`/subjects?grade_id=${gradeId}`);
+    const data = await apiGet(`/content/subjects?grade_id=${gradeId}`);
     subjectSelect.innerHTML = '<option value="">كل المواد</option>' +
       data.subjects.map(s => `<option value="${s.id}">${s.icon || ''} ${s.name}</option>`).join('');
   } catch (err) {
@@ -271,7 +271,7 @@ async function loadQuizzes() {
   list.innerHTML = '<div class="empty-state">...جاري تحميل الاختبارات</div>';
 
   const subjectId = document.getElementById('subjectSelect').value;
-  let path = `/quizzes?grade_id=${currentGradeId}`;
+  let path = `/content/quizzes?grade_id=${currentGradeId}`;
   if (subjectId) path += `&subject_id=${subjectId}`;
 
   try {
@@ -285,7 +285,7 @@ async function loadQuizzes() {
 async function initGradeSelect() {
   const gradeSelect = document.getElementById('gradeSelect');
   try {
-    const data = await apiGet('/grades');
+    const data = await apiGet('/content/grades');
     gradeSelect.innerHTML = data.grades.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
 
     if (token) {
