@@ -383,7 +383,7 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-let token = sessionStorage.getItem('masar_admin_token');
+let token = localStorage.getItem('masar_admin_token');
 
 let gradesCache = [];
 let subjectsCache = [];
@@ -445,7 +445,7 @@ async function doLogin(e) {
     if (data.user.role !== 'admin') throw new Error('هذا الحساب مو أدمن — استخدم حساب مخصص للوحة التحكم');
 
     token = data.access_token;
-    sessionStorage.setItem('masar_admin_token', token);
+    localStorage.setItem('masar_admin_token', token);
     enterApp();
   } catch (err) {
     showMsg('loginMsg', err.message, 'error');
@@ -456,7 +456,7 @@ async function doLogin(e) {
 }
 
 function logout() {
-  sessionStorage.removeItem('masar_admin_token');
+  localStorage.removeItem('masar_admin_token');
   token = null;
   document.getElementById('app').classList.remove('show');
   document.getElementById('loginGate').style.display = 'flex';
