@@ -141,8 +141,8 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-// استخدم sessionStorage باستمرار — نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب
-const token = sessionStorage.getItem('masar_token');
+// استخدم localStorage باستمرار — نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب
+const token = localStorage.getItem('masar_token');
 
 const params = new URLSearchParams(location.search);
 let subsectionId = params.get('subsection');
