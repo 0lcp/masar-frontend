@@ -59,6 +59,12 @@ body {
 .avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--teal-soft)); flex-shrink:0; }
 .profile-mini .pname { font-size:13px; font-weight:600; }
 .profile-mini .pgrade { font-size:11px; color: var(--muted); }
+.logout-btn {
+  width:100%; margin-top:10px; background: transparent; color: var(--muted);
+  border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px;
+  cursor:pointer; font-family:'IBM Plex Sans Arabic', sans-serif; transition: all .15s;
+}
+.logout-btn:hover { border-color: var(--danger); color: var(--danger); }
 
 /* قائمة الهاتف: بدل الإخفاء الكامل، تصير قائمة منزلقة (off-canvas) */
 .menu-btn {
@@ -221,6 +227,7 @@ body {
           <div class="pgrade" id="sidebarGrade">...</div>
         </div>
       </div>
+      <button class="logout-btn" onclick="logout()">🚪 تسجيل خروج</button>
     </div>
   </aside>
 
@@ -289,6 +296,11 @@ body {
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
 const token = localStorage.getItem('masar_token');
+
+function logout() {
+  localStorage.removeItem('masar_token');
+  location.href = 'masar-auth.html';
+}
 
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
