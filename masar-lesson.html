@@ -141,7 +141,7 @@ body {
 
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
-// استخدم localStorage باستمرار — نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب
+// موحّد مع باقي الصفحات (auth, dashboard, quiz): localStorage
 const token = localStorage.getItem('masar_token');
 
 const params = new URLSearchParams(location.search);
@@ -157,6 +157,40 @@ async function apiGet(path) {
   });
   const data = await res.json();
   return { ok: res.ok, status: res.status, data };
+}
+
+// يحوّل أي شكل رابط يوتيوب شائع (watch?v=, youtu.be/, shorts/) لصيغة embed
+// اللي تشتغل جوة iframe. إذا الرابط مو يوتيوب (مثلاً Bunny/Cloudflare لاحقاً)
+// يرجعه كما هو بدون تغيير.
+function toEmbedUrl(url) {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace('www.', '');
+
+    if (host === 'youtu.be') {
+      const id = u.pathname.slice(1);
+      return id ? `https://www.youtube.com/embed/${id}` : url;
+    }
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (u.pathname === '/watch') {
+        const id = u.searchParams.get('v');
+        return id ? `https://www.youtube.com/embed/${id}` : url;
+      }
+      if (u.pathname.startsWith('/shorts/')) {
+        const id = u.pathname.split('/')[2];
+        return id ? `https://www.youtube.com/embed/${id}` : url;
+      }
+      if (u.pathname.startsWith('/embed/')) {
+        return url; // أصلاً بصيغة embed صحيحة
+      }
+    }
+
+    return url; // رابط من خدمة ثانية — نتركه كما هو
+  } catch (err) {
+    return url;
+  }
 }
 
 function renderState(icon, text, showLoginLink) {
@@ -188,8 +222,9 @@ function renderLesson(lesson, lessons) {
   const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
   const isDone = completedIds.has(lesson.id);
 
-  const videoInner = lesson.video_url
-    ? `<iframe src="${lesson.video_url}" allowfullscreen></iframe>`
+  const embedUrl = toEmbedUrl(lesson.video_url);
+  const videoInner = embedUrl
+    ? `<iframe src="${embedUrl}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`
     : `<div class="video-placeholder-icon">🎬</div><div class="video-placeholder-text">الفيديو قريباً — المحتوى النصي متاح تحت</div>`;
 
   document.getElementById('mainContent').innerHTML = `
