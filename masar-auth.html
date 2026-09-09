@@ -335,7 +335,7 @@ async function submitLogin() {
     }
 
     // خزّن التوكن محلياً لهذي الجلسة، واستخدمه بأي طلب لاحق للـ API
-    sessionStorage.setItem('masar_token', data.access_token);
+    localStorage.setItem('masar_token', data.access_token);
     showMsg('loginMsg', `هلا ${data.user.full_name} 👋 تم تسجيل الدخول بنجاح`, 'success');
 
     // وجّه المستخدم حسب دوره: أدمن يروح للوحة الأدمن، الطالب يروح للوحة الطالب
