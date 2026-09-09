@@ -100,7 +100,7 @@ body {
 <script>
 const API_BASE = 'https://masar-backend-qcpq.onrender.com/api';
 // نفس مكان الحفظ بصفحة تسجيل الدخول ولوحة الطالب وصفحة الدرس
-const token = sessionStorage.getItem('masar_token');
+const token = localStorage.getItem('masar_token');
 const params = new URLSearchParams(location.search);
 const lessonId = params.get('lesson');
 
